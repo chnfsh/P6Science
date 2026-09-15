@@ -215,7 +215,10 @@
       <div class="filters">
         <div class="segmented">
           <button class="filter-btn" data-filter="all">全部</button>
-          <button class="filter-btn active" data-filter="unmastered">待复习</button>
+          <button class="filter-btn active" data-filter="practice">待练习（错题+未做）</button>
+          <button class="filter-btn" data-filter="wrong">只看错题</button>
+          <button class="filter-btn" data-filter="notdone">只看未做</button>
+          <button class="filter-btn" data-filter="inprogress">练习中</button>
           <button class="filter-btn" data-filter="mastered">已掌握</button>
         </div>
         <button class="reset-btn" id="resetBtn">清空记录</button>
@@ -272,7 +275,7 @@ function loadProgress(){
 function saveProgress(p){ localStorage.setItem(STORE_KEY, JSON.stringify(p)); }
 
 let progress = loadProgress();
-let currentFilter = "unmastered";
+let currentFilter = "practice";
 let currentTopic = "all";
 let currentView = "practice";
 let currentLang = localStorage.getItem("p6sc_lang_v1") || "en";
@@ -305,17 +308,26 @@ function hasStarted(qid){
   const p = progress[qid];
   return !!(p && p.everChecked);
 }
+// lastCorrect: true = last check was right, false = last check was wrong, null = never checked
+function lastCorrect(qid){
+  const p = progress[qid];
+  if(!p || !p.everChecked) return null;
+  return !!p.lastCorrect;
+}
+function isWrongLast(qid){ return hasStarted(qid) && lastCorrect(qid) === false; }
+function isNotStarted(qid){ return !hasStarted(qid); }
+function isInProgress(qid){ return hasStarted(qid) && lastCorrect(qid) === true && !isMastered(qid); }
 
 function computeStats(){
   const list = activeQuestions();
-  let mastered=0, inProgress=0, notStarted=0;
+  let mastered=0, inProgress=0, notStarted=0, wrongLast=0;
   list.forEach(q=>{
-    const streak = getStreak(q.id);
-    if(streak >= MASTERY_TARGET) mastered++;
-    else if(hasStarted(q.id)) inProgress++;
+    if(isMastered(q.id)) mastered++;
+    else if(isWrongLast(q.id)) wrongLast++;
+    else if(isInProgress(q.id)) inProgress++;
     else notStarted++;
   });
-  return { total: list.length, mastered, inProgress, notStarted };
+  return { total: list.length, mastered, inProgress, notStarted, wrongLast };
 }
 
 function renderStamps(){
@@ -323,9 +335,9 @@ function renderStamps(){
   const en = currentLang === "en";
   document.getElementById("stampbar").innerHTML = `
     <div class="stamp correct">${en?"Mastered":"已掌握"} <span class="n">${s.mastered}</span></div>
-    <div class="stamp wrong">${en?"In progress":"练习中"} <span class="n">${s.inProgress}</span></div>
-    <div class="stamp pending">${en?"Not started":"未开始"} <span class="n">${s.notStarted}</span></div>
-    <div class="stamp rate">${en?"Total":"总数"} <span class="n">${s.total}</span></div>
+    <div class="stamp wrong">${en?"Wrong":"错题"} <span class="n">${s.wrongLast}</span></div>
+    <div class="stamp pending">${en?"Not started":"未做"} <span class="n">${s.notStarted}</span></div>
+    <div class="stamp rate">${en?"In progress":"练习中"} <span class="n">${s.inProgress}</span></div>
   `;
   document.getElementById("totalCount").textContent = ALL_QUESTIONS.filter(q=>!q.aiGenerated).length;
 }
@@ -335,7 +347,10 @@ function optionLetter(i){ return "①②③④⑤"[i] || (i+1); }
 function questionMatchesFilter(q){
   if(currentTopic !== "all" && q.topic !== currentTopic) return false;
   if(currentFilter === "all") return true;
-  if(currentFilter === "unmastered") return !isMastered(q.id);
+  if(currentFilter === "practice") return isWrongLast(q.id) || isNotStarted(q.id);
+  if(currentFilter === "wrong") return isWrongLast(q.id);
+  if(currentFilter === "notdone") return isNotStarted(q.id);
+  if(currentFilter === "inprogress") return isInProgress(q.id);
   if(currentFilter === "mastered") return isMastered(q.id);
   return true;
 }
@@ -546,7 +561,8 @@ function wireCard(q){
       if(!p || typeof p.picked !== "number") return;
       p.checked = true;
       p.everChecked = true;
-      p.streak = (p.picked === q.correct) ? (getStreak(q.id) + 1) : 0;
+      p.lastCorrect = (p.picked === q.correct);
+      p.streak = p.lastCorrect ? (getStreak(q.id) + 1) : 0;
       saveProgress(progress);
       justRevealedId = q.id; // keep this card expanded through the render pass right after checking
       renderMain();
@@ -560,7 +576,8 @@ function wireCard(q){
     retryBtn.addEventListener("click", ()=>{
       const streak = getStreak(q.id);
       const everChecked = !!(progress[q.id] && progress[q.id].everChecked);
-      progress[q.id] = { picked: null, checked: false, streak, everChecked };
+      const prevLastCorrect = progress[q.id] ? progress[q.id].lastCorrect : undefined;
+      progress[q.id] = { picked: null, checked: false, streak, everChecked, lastCorrect: prevLastCorrect };
       saveProgress(progress);
       renderMain();
       renderStamps();
@@ -640,7 +657,10 @@ function applyLangToChrome(){
   document.querySelectorAll(".view-tab")[1].textContent = en ? "Report" : "分析报告";
   document.querySelectorAll(".view-tab")[2].textContent = en ? "Targeted Practice" : "针对性训练";
   document.querySelector('[data-filter="all"]').textContent = en ? "All" : "全部";
-  document.querySelector('[data-filter="unmastered"]').textContent = en ? "To review" : "待复习";
+  document.querySelector('[data-filter="practice"]').textContent = en ? "To practice (wrong + not done)" : "待练习（错题+未做）";
+  document.querySelector('[data-filter="wrong"]').textContent = en ? "Wrong only" : "只看错题";
+  document.querySelector('[data-filter="notdone"]').textContent = en ? "Not done only" : "只看未做";
+  document.querySelector('[data-filter="inprogress"]').textContent = en ? "In progress" : "练习中";
   document.querySelector('[data-filter="mastered"]').textContent = en ? "Mastered" : "已掌握";
   document.getElementById("resetBtn").textContent = en ? "Clear progress" : "清空记录";
   document.querySelector(".lang-seg-label").textContent = en ? "Explanation" : "讲解";
