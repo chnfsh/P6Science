@@ -309,10 +309,14 @@ function hasStarted(qid){
   return !!(p && p.everChecked);
 }
 // lastCorrect: true = last check was right, false = last check was wrong, null = never checked
+// Derived from streak rather than a stored flag, so it stays correct even for records saved
+// by an earlier version of this page (before this field existed): streak only ever increments
+// after a correct check, so streak>0 reliably means "last check was correct"; streak===0 while
+// everChecked is true can only happen if the check that reset it was wrong.
 function lastCorrect(qid){
   const p = progress[qid];
   if(!p || !p.everChecked) return null;
-  return !!p.lastCorrect;
+  return getStreak(qid) > 0;
 }
 function isWrongLast(qid){ return hasStarted(qid) && lastCorrect(qid) === false; }
 function isNotStarted(qid){ return !hasStarted(qid); }
@@ -561,8 +565,8 @@ function wireCard(q){
       if(!p || typeof p.picked !== "number") return;
       p.checked = true;
       p.everChecked = true;
-      p.lastCorrect = (p.picked === q.correct);
-      p.streak = p.lastCorrect ? (getStreak(q.id) + 1) : 0;
+      const wasCorrect = (p.picked === q.correct);
+      p.streak = wasCorrect ? (getStreak(q.id) + 1) : 0;
       saveProgress(progress);
       justRevealedId = q.id; // keep this card expanded through the render pass right after checking
       renderMain();
@@ -576,8 +580,7 @@ function wireCard(q){
     retryBtn.addEventListener("click", ()=>{
       const streak = getStreak(q.id);
       const everChecked = !!(progress[q.id] && progress[q.id].everChecked);
-      const prevLastCorrect = progress[q.id] ? progress[q.id].lastCorrect : undefined;
-      progress[q.id] = { picked: null, checked: false, streak, everChecked, lastCorrect: prevLastCorrect };
+      progress[q.id] = { picked: null, checked: false, streak, everChecked };
       saveProgress(progress);
       renderMain();
       renderStamps();
