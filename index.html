@@ -103,7 +103,8 @@
   .options{ padding:6px 16px 14px; display:flex; flex-direction:column; gap:9px; }
   .opt{ position:relative; text-align:left; width:100%; border:1.5px solid var(--paper-line); background:#FFFFFF; border-radius:5px; padding:10px 42px 10px 14px; font-size:14.5px; line-height:1.55; cursor:pointer; color:var(--ink); font-family:"Noto Sans SC",sans-serif; transition:border-color .15s, background .15s; }
   .opt:hover{ border-color:var(--ink-soft); }
-  .opt.picked{ border-color:var(--ink); background:#FBF8EF; }
+  .opt.picked{ border-color:var(--ink); border-width:2px; background:#FBF8EF; font-weight:600; box-shadow:0 1px 4px rgba(32,41,61,0.12); }
+  .opt.picked .tag{ color:var(--ink); }
   .opt .tag{ font-family:"JetBrains Mono",monospace; font-weight:700; margin-right:8px; color:var(--ink-soft); }
   .opt img{ display:block; max-width:100%; height:auto; margin-top:8px; border:1px solid var(--paper-line); border-radius:4px; background:#fff; }
   .opt.has-img{ padding-right:14px; }
@@ -185,10 +186,27 @@
   .qcard-collapsed .cc-check{ color:var(--green); font-size:15px; flex-shrink:0; }
   .qcard-collapsed .cc-label{ font-size:12.5px; color:var(--ink-soft); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .qcard-collapsed .cc-reopen{ font-family:"JetBrains Mono",monospace; font-size:10.5px; color:var(--green); text-decoration:underline; flex-shrink:0; }
+
+  /* ---- floating scroll-nav buttons ---- */
+  .scroll-nav-btn{
+    position:fixed; left:50%; transform:translateX(-50%) translateY(-8px);
+    width:42px; height:42px; border-radius:50%; z-index:50;
+    background:var(--ink); color:var(--paper); border:none; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; font-size:18px;
+    box-shadow:0 4px 14px rgba(32,41,61,0.35);
+    opacity:0; pointer-events:none; transition:opacity .2s, transform .2s;
+  }
+  .scroll-nav-btn.show{ opacity:.92; pointer-events:auto; transform:translateX(-50%) translateY(0); }
+  .scroll-nav-btn:hover{ opacity:1; }
+  #backToTopBtn{ top:16px; }
+  #backToPositionBtn{ bottom:20px; background:var(--red); }
 </style>
 </head>
 <body>
 <div class="margin-rule"></div>
+
+<button class="scroll-nav-btn" id="backToTopBtn" title="Back to top" aria-label="Back to top">↑</button>
+<button class="scroll-nav-btn" id="backToPositionBtn" title="Back to where you were" aria-label="Back to where you were">↓</button>
 
 <header>
   <div class="lang-seg" id="langSeg">
@@ -466,7 +484,7 @@ function renderCard(q){
 
   const optsHtml = q.options.map((opt, i) => {
     let cls = "opt";
-    if(revealPicked === i) cls += " picked";
+    if(picked === i) cls += " picked";
     let mark = "";
     let circle = "";
     if(revealMode){
@@ -836,6 +854,44 @@ renderStamps();
 renderMain();
 renderAiIntro();
 applyLangToChrome();
+
+/* ---------------- 悬浮的返回顶部 / 返回原位置按钮 ---------------- */
+(function(){
+  const topBtn = document.getElementById("backToTopBtn");
+  const backBtn = document.getElementById("backToPositionBtn");
+  let savedScrollY = null;
+
+  function updateNavButtons(){
+    const pastOnePage = window.scrollY > window.innerHeight * 0.85;
+    if(pastOnePage){
+      topBtn.classList.add("show");
+      backBtn.classList.remove("show");
+    } else {
+      topBtn.classList.remove("show");
+      if(savedScrollY !== null && savedScrollY > window.innerHeight * 0.85){
+        backBtn.classList.add("show");
+      } else {
+        backBtn.classList.remove("show");
+      }
+    }
+  }
+
+  topBtn.addEventListener("click", ()=>{
+    savedScrollY = window.scrollY;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  backBtn.addEventListener("click", ()=>{
+    if(savedScrollY !== null){
+      window.scrollTo({ top: savedScrollY, behavior: "smooth" });
+    }
+    savedScrollY = null;
+    backBtn.classList.remove("show");
+  });
+
+  window.addEventListener("scroll", updateNavButtons, { passive: true });
+  updateNavButtons();
+})();
 </script>
 </body>
 </html>
