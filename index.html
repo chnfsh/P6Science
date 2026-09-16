@@ -355,16 +355,21 @@ function hasStarted(qid){
 function lastCorrect(qid){
   const p = progress[qid];
   if(!p || !hasStarted(qid)) return null;
-  // Prefer the actually-recorded picked answer when it's still there — this covers legacy
-  // records saved before "streak" existed, where getStreak() alone would default to 0 and
-  // wrongly imply "last check was wrong" even for a question that was answered correctly.
-  if(typeof p.picked === "number"){
-    const q = QUESTION_BY_ID[qid];
-    if(q) return p.picked === q.correct;
+  const q = QUESTION_BY_ID[qid];
+  // IMPORTANT: only trust p.picked when p.checked is true, i.e. the student has actually
+  // pressed "Check answer" — while an option is merely selected (checked:false), p.picked
+  // is just a provisional, unconfirmed choice and must NOT be treated as a completed attempt
+  // (doing so previously made a question's filter category — and therefore its visibility
+  // under a status filter like "待练习" — flip the instant an option was clicked, before
+  // the student ever got to press "Check answer").
+  if(p.checked && typeof p.picked === "number" && q){
+    return p.picked === q.correct;
   }
-  if(p.lastAttempt && typeof p.lastAttempt.picked === "number"){
-    const q = QUESTION_BY_ID[qid];
-    if(q) return p.lastAttempt.picked === q.correct;
+  // Otherwise fall back to the last CONFIRMED attempt on record (covers legacy records saved
+  // before "streak" existed, where getStreak() alone would default to 0 and wrongly imply
+  // "last check was wrong" even for a question that was answered correctly).
+  if(p.lastAttempt && typeof p.lastAttempt.picked === "number" && q){
+    return p.lastAttempt.picked === q.correct;
   }
   return getStreak(qid) > 0;
 }
@@ -465,7 +470,15 @@ function renderMain(){
   const containerId = currentView === "ai" ? "aiMain" : "main";
   const main = document.getElementById(containerId);
   if(!main) return;
-  const list = activeQuestions().filter(questionMatchesFilter);
+  // A question's status (wrong/not-done/in-progress/mastered) can change the instant it's
+  // checked, which can move it out of the currently active status filter (e.g. answering
+  // correctly moves a question from "待练习" into "练习中"). Without an exemption, the card
+  // would vanish the moment "Check answer" is pressed — before the student has any chance
+  // to actually read the revealed answer and explanation. So: the question just checked
+  // always stays visible for this render (topic filter still applies), and only drops out
+  // of view on the NEXT render — i.e. once the student moves on to something else.
+  const topicOk = q => (currentTopic === "all" || q.topic === currentTopic);
+  const list = activeQuestions().filter(q => topicOk(q) && (q.id === justRevealedId || questionMatchesFilter(q)));
   if(list.length === 0){
     const en = currentLang === "en";
     main.innerHTML = `<div class="empty">${en ? "Nothing in this category — try a different filter?" : "这个分类下暂时没有题目 ～ 换个筛选试试？"}</div>`;
