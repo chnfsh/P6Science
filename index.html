@@ -191,15 +191,15 @@
   .scroll-nav-btn{
     position:fixed; left:50%; transform:translateX(-50%) translateY(-8px);
     width:42px; height:42px; border-radius:50%; z-index:50;
-    background:var(--ink); color:var(--paper); border:none; cursor:pointer;
-    display:flex; align-items:center; justify-content:center; font-size:18px;
-    box-shadow:0 4px 14px rgba(32,41,61,0.35);
+    background:#F1E9D8; color:var(--ink); border:1px solid #DDD0AE; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; font-size:17px;
+    box-shadow:0 3px 10px rgba(32,41,61,0.18);
     opacity:0; pointer-events:none; transition:opacity .2s, transform .2s;
   }
-  .scroll-nav-btn.show{ opacity:.92; pointer-events:auto; transform:translateX(-50%) translateY(0); }
+  .scroll-nav-btn.show{ opacity:.95; pointer-events:auto; transform:translateX(-50%) translateY(0); }
   .scroll-nav-btn:hover{ opacity:1; }
   #backToTopBtn{ top:16px; }
-  #backToPositionBtn{ bottom:20px; background:var(--red); }
+  #backToPositionBtn{ bottom:20px; background:#F3DDD6; border-color:#E3B9AE; }
 </style>
 </head>
 <body>
@@ -239,7 +239,7 @@
           <button class="filter-btn" data-filter="inprogress">练习中</button>
           <button class="filter-btn" data-filter="mastered">已掌握</button>
         </div>
-        <button class="reset-btn" id="resetBtn">清空记录</button>
+        <button class="reset-btn" id="resetBtn" title="清空做题痕迹，开始练习">一键重答</button>
       </div>
     </div>
 
@@ -676,12 +676,27 @@ document.querySelectorAll(".lang-opt").forEach(btn=>{
 });
 
 document.getElementById("resetBtn").addEventListener("click", ()=>{
-  if(confirm("确定要清空所有作答记录吗？这个操作无法撤销。")){
-    progress = {};
+  // "一键重答": clears the visible pick/reveal state for every attempted question currently
+  // in view (respecting the active filter and topic), so the student faces a genuinely blank
+  // question again — but keeps the mastery streak and the last-attempt record intact
+  // underneath (still viewable per-question via "查看上次作答记录").
+  const list = activeQuestions().filter(questionMatchesFilter);
+  let affected = 0;
+  list.forEach(q=>{
+    const p = progress[q.id];
+    if(p && p.everChecked){
+      const streak = getStreak(q.id);
+      const lastAttempt = p.lastAttempt;
+      progress[q.id] = { picked: null, checked: false, streak, everChecked: true, lastAttempt };
+      affected++;
+    }
+  });
+  if(affected > 0){
+    viewingHistoryIds.clear();
     saveProgress(progress);
-    renderMain();
-    renderStamps();
   }
+  renderMain();
+  renderStamps();
 });
 
 /* ---------------- 视图切换：错题练习 / 家长与老师参考 ---------------- */
@@ -730,7 +745,8 @@ function applyLangToChrome(){
   document.querySelector('[data-filter="notdone"]').textContent = en ? "Not done only" : "只看未做";
   document.querySelector('[data-filter="inprogress"]').textContent = en ? "In progress" : "练习中";
   document.querySelector('[data-filter="mastered"]').textContent = en ? "Mastered" : "已掌握";
-  document.getElementById("resetBtn").textContent = en ? "Clear progress" : "清空记录";
+  document.getElementById("resetBtn").textContent = en ? "Retry all" : "一键重答";
+  document.getElementById("resetBtn").title = en ? "Clear the visible marks and start practicing again" : "清空做题痕迹，开始练习";
   document.querySelector(".lang-seg-label").textContent = en ? "Explanation" : "讲解";
   const statusLbl = document.getElementById("statusGroupLabel");
   if(statusLbl) statusLbl.textContent = en ? "Filter by status" : "按状态筛选";
