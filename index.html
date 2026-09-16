@@ -200,6 +200,18 @@
   .scroll-nav-btn:hover{ opacity:1; }
   #backToTopBtn{ top:16px; }
   #backToPositionBtn{ bottom:20px; background:#F3DDD6; border-color:#E3B9AE; }
+
+  /* ---- toast feedback ---- */
+  .toast{
+    position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(12px);
+    background:var(--ink); color:var(--paper); font-family:"Noto Sans SC",sans-serif;
+    font-size:13px; font-weight:600; padding:10px 20px; border-radius:24px; z-index:80;
+    box-shadow:0 6px 18px rgba(32,41,61,0.3);
+    opacity:0; pointer-events:none; transition:opacity .25s, transform .25s;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  .reset-btn.pressed{ color:var(--ink); }
 </style>
 </head>
 <body>
@@ -207,6 +219,7 @@
 
 <button class="scroll-nav-btn" id="backToTopBtn" title="Back to top" aria-label="Back to top">↑</button>
 <button class="scroll-nav-btn" id="backToPositionBtn" title="Back to where you were" aria-label="Back to where you were">↓</button>
+<div class="toast" id="toast"></div>
 
 <header>
   <div class="lang-seg" id="langSeg">
@@ -675,12 +688,26 @@ document.querySelectorAll(".lang-opt").forEach(btn=>{
   });
 });
 
-document.getElementById("resetBtn").addEventListener("click", ()=>{
-  // "一键重答": clears the visible pick/reveal state for every attempted question currently
-  // in view (respecting the active filter and topic), so the student faces a genuinely blank
-  // question again — but keeps the mastery streak and the last-attempt record intact
-  // underneath (still viewable per-question via "查看上次作答记录").
-  const list = activeQuestions().filter(questionMatchesFilter);
+function showToast(msg, ms=2200){
+  const t = document.getElementById("toast");
+  if(!t) return;
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(t._hideTimer);
+  t._hideTimer = setTimeout(()=>{ t.classList.remove("show"); }, ms);
+}
+
+document.getElementById("resetBtn").addEventListener("click", (ev)=>{
+  // "一键重答": clears the visible pick/reveal state for every attempted question in the
+  // current tab (respecting the topic filter, but deliberately NOT the status filter —
+  // status buckets shift the instant you answer something, e.g. a correct answer moves a
+  // question from "待练习" into "练习中" and out of that view, so scoping to the status
+  // filter would silently miss exactly the question you just answered). Streak and the
+  // last-attempt record are kept intact underneath (still viewable per-question via
+  // "查看上次作答记录").
+  const btn = ev.currentTarget;
+  const en = currentLang === "en";
+  const list = activeQuestions().filter(q => currentTopic === "all" || q.topic === currentTopic);
   let affected = 0;
   list.forEach(q=>{
     const p = progress[q.id];
@@ -697,6 +724,12 @@ document.getElementById("resetBtn").addEventListener("click", ()=>{
   }
   renderMain();
   renderStamps();
+  // brief press feedback on the button itself, plus a toast confirming exactly what happened
+  btn.classList.add("pressed");
+  setTimeout(()=>btn.classList.remove("pressed"), 300);
+  showToast(affected > 0
+    ? (en ? `Reset ${affected} question${affected>1?"s":""} — ready to try again` : `已重置 ${affected} 道题，可以重新作答了`)
+    : (en ? "Nothing to reset here yet" : "这里还没有可以重置的题目"));
 });
 
 /* ---------------- 视图切换：错题练习 / 家长与老师参考 ---------------- */
