@@ -314,6 +314,8 @@ let currentLang = localStorage.getItem("p6sc_lang_v1") || "en";
 const ALL_QUESTIONS = BATCHES.flatMap(b => b.questions.map(q => ({...q, batchLabel:b.label})));
 const REAL_QUESTIONS = ALL_QUESTIONS.filter(q => !q.aiGenerated);
 const AI_QUESTIONS = ALL_QUESTIONS.filter(q => q.aiGenerated);
+const QUESTION_BY_ID = {};
+ALL_QUESTIONS.forEach(q => { QUESTION_BY_ID[q.id] = q; });
 
 function activeQuestions(){
   if(currentView === "ai") return AI_QUESTIONS;
@@ -337,7 +339,13 @@ function getStreak(qid){
 function isMastered(qid){ return getStreak(qid) >= MASTERY_TARGET; }
 function hasStarted(qid){
   const p = progress[qid];
-  return !!(p && p.everChecked);
+  if(!p) return false;
+  // "everChecked" was only added partway through this app's life. Records saved by the very
+  // first version (potentially days/weeks old) only ever set {picked, checked}, with no
+  // everChecked field at all — so relying on everChecked alone silently treats genuinely
+  // already-answered old questions as "not started". Treat any of these as evidence of a
+  // real past attempt.
+  return !!(p.everChecked || p.checked || (typeof p.streak === "number" && p.streak > 0));
 }
 // lastCorrect: true = last check was right, false = last check was wrong, null = never checked
 // Derived from streak rather than a stored flag, so it stays correct even for records saved
@@ -346,7 +354,18 @@ function hasStarted(qid){
 // everChecked is true can only happen if the check that reset it was wrong.
 function lastCorrect(qid){
   const p = progress[qid];
-  if(!p || !p.everChecked) return null;
+  if(!p || !hasStarted(qid)) return null;
+  // Prefer the actually-recorded picked answer when it's still there — this covers legacy
+  // records saved before "streak" existed, where getStreak() alone would default to 0 and
+  // wrongly imply "last check was wrong" even for a question that was answered correctly.
+  if(typeof p.picked === "number"){
+    const q = QUESTION_BY_ID[qid];
+    if(q) return p.picked === q.correct;
+  }
+  if(p.lastAttempt && typeof p.lastAttempt.picked === "number"){
+    const q = QUESTION_BY_ID[qid];
+    if(q) return p.lastAttempt.picked === q.correct;
+  }
   return getStreak(qid) > 0;
 }
 function isWrongLast(qid){ return hasStarted(qid) && lastCorrect(qid) === false; }
@@ -711,7 +730,9 @@ document.getElementById("resetBtn").addEventListener("click", (ev)=>{
   let affected = 0;
   list.forEach(q=>{
     const p = progress[q.id];
-    if(p && p.everChecked){
+    // hasStarted() covers legacy records saved before "everChecked" existed (some may be
+    // a week or more old, saved by an earlier version of this page as just {picked, checked}).
+    if(p && hasStarted(q.id)){
       const streak = getStreak(q.id);
       const lastAttempt = p.lastAttempt;
       progress[q.id] = { picked: null, checked: false, streak, everChecked: true, lastAttempt };
