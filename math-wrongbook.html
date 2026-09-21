@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>数学错题库</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F6F2E7;
+  --paper-2:#EFE9D8;
+  --rule:#DAD2B8;
+  --ink:#22314B;
+  --ink-soft:#5B6478;
+  --red:#B23A2E;
+  --red-bg:#F6E3DE;
+  --green:#3F7A5B;
+  --green-bg:#E1EEE4;
+  --chip-border:#C9BE9C;
+  --amber:#9C6B1E;
+  --amber-bg:#F4E7CD;
+  --radius:10px;
+}
+:root:not([data-theme="light"]){}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#1B1B17;
+    --paper-2:#232320;
+    --rule:#3A392F;
+    --ink:#EDE7D6;
+    --ink-soft:#B4AD98;
+    --red:#E08A7C;
+    --red-bg:#3A2521;
+    --green:#8FC7A4;
+    --green-bg:#20342A;
+    --chip-border:#4C4A3B;
+    --amber:#E3B968;
+    --amber-bg:#3A2E17;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#1B1B17;
+  --paper-2:#232320;
+  --rule:#3A392F;
+  --ink:#EDE7D6;
+  --ink-soft:#B4AD98;
+  --red:#E08A7C;
+  --red-bg:#3A2521;
+  --green:#8FC7A4;
+  --green-bg:#20342A;
+  --chip-border:#4C4A3B;
+  --amber:#E3B968;
+  --amber-bg:#3A2E17;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'IBM Plex Sans',-apple-system,sans-serif;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  min-height:100%;
+}
+.wrap{
+  max-width:720px;
+  margin:0 auto;
+  padding:28px 18px 64px;
+}
+header.head{
+  border-bottom:2px solid var(--ink);
+  padding-bottom:16px;
+  margin-bottom:20px;
+}
+header.head h1{
+  font-family:'Newsreader',serif;
+  font-weight:600;
+  font-size:28px;
+  margin:0 0 4px;
+  letter-spacing:0.2px;
+}
+header.head p.sub{
+  margin:0;
+  color:var(--ink-soft);
+  font-size:13.5px;
+}
+.namebox{
+  display:flex;
+  gap:18px;
+  margin-top:14px;
+  font-size:12.5px;
+  color:var(--ink-soft);
+  flex-wrap:wrap;
+}
+.namebox span{border-bottom:1px dashed var(--rule);padding-bottom:2px;flex:1;min-width:120px;}
+
+.progress-row{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:var(--paper-2);
+  border:1px solid var(--rule);
+  border-radius:var(--radius);
+  padding:12px 14px;
+  margin-bottom:20px;
+}
+.progress-row .num{font-family:'Newsreader',serif;font-size:20px;font-weight:600;}
+.progress-track{
+  flex:1;height:8px;border-radius:5px;background:var(--rule);overflow:hidden;
+}
+.progress-fill{height:100%;background:var(--green);border-radius:5px;transition:width .4s ease;}
+.progress-label{font-size:12.5px;color:var(--ink-soft);white-space:nowrap;}
+
+.filters{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:14px;
+}
+.filters.section-end{margin-bottom:22px;}
+.filter-label{
+  font-size:11px;
+  color:var(--ink-soft);
+  text-transform:uppercase;
+  letter-spacing:0.04em;
+  width:100%;
+  margin-bottom:2px;
+}
+.chip{
+  border:1px solid var(--chip-border);
+  background:transparent;
+  color:var(--ink);
+  padding:6px 13px;
+  border-radius:999px;
+  font-size:13px;
+  cursor:pointer;
+  font-family:'IBM Plex Sans',sans-serif;
+}
+.chip.active{
+  background:var(--ink);
+  color:var(--paper);
+  border-color:var(--ink);
+}
+
+.booklet-group{margin-bottom:36px;}
+.booklet-title{
+  font-family:'Newsreader',serif;
+  font-size:23px;
+  font-weight:600;
+  margin:0 0 14px;
+  padding:8px 0 8px 12px;
+  border-left:4px solid var(--ink);
+  background:var(--paper-2);
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+}
+.booklet-title .count{
+  font-family:'IBM Plex Sans',sans-serif;
+  font-size:12.5px;
+  font-weight:400;
+  color:var(--ink-soft);
+}
+
+.topic-group{margin-bottom:26px;}
+.topic-title{
+  font-family:'Newsreader',serif;
+  font-size:18px;
+  font-weight:600;
+  margin:0 0 12px;
+  padding-bottom:6px;
+  border-bottom:1px solid var(--rule);
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.topic-title .count{
+  font-family:'IBM Plex Sans',sans-serif;
+  font-size:12.5px;
+  font-weight:400;
+  color:var(--ink-soft);
+}
+
+.card{
+  position:relative;
+  background:var(--paper-2);
+  border:1px solid var(--rule);
+  border-radius:var(--radius);
+  padding:16px 18px 18px 26px;
+  margin-bottom:16px;
+}
+.card::before{
+  content:"";
+  position:absolute;
+  left:10px;top:14px;bottom:14px;
+  width:1px;
+  background:var(--rule);
+}
+.card-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+  margin-bottom:10px;
+  flex-wrap:wrap;
+}
+.tag-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.tag{
+  font-size:11.5px;
+  padding:2px 8px;
+  border-radius:5px;
+  background:var(--paper);
+  border:1px solid var(--rule);
+  color:var(--ink-soft);
+}
+.tag.mastered{
+  background:var(--green-bg);
+  color:var(--green);
+  border-color:var(--green);
+  font-weight:500;
+}
+.streak-dots{display:flex;gap:4px;align-items:center;}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--rule);}
+.dot.on{background:var(--green);}
+
+.diagram-box{
+  background:var(--paper);
+  border:1px solid var(--rule);
+  border-radius:8px;
+  padding:14px;
+  margin-bottom:14px;
+}
+
+.qtext{
+  font-family:'Newsreader',serif;
+  font-size:16px;
+  line-height:1.65;
+  margin-bottom:14px;
+}
+.qtext .qparts{margin:8px 0 0 0;padding-left:20px;}
+.qtext .qparts li{margin-bottom:4px;}
+
+.action-area{border-top:1px dashed var(--rule);padding-top:12px;}
+
+button.primary-btn{
+  background:var(--ink);
+  color:var(--paper);
+  border:none;
+  padding:9px 18px;
+  border-radius:7px;
+  font-size:13.5px;
+  cursor:pointer;
+  font-family:'IBM Plex Sans',sans-serif;
+  font-weight:500;
+}
+button.primary-btn:disabled{opacity:.55;cursor:default;}
+button.ghost-btn{
+  background:transparent;
+  border:1px solid var(--chip-border);
+  color:var(--ink);
+  padding:8px 16px;
+  border-radius:7px;
+  font-size:13.5px;
+  cursor:pointer;
+  font-family:'IBM Plex Sans',sans-serif;
+}
+
+.timer-line{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:13.5px;
+  color:var(--ink-soft);
+}
+.timer-track{width:110px;height:5px;background:var(--rule);border-radius:4px;overflow:hidden;}
+.timer-fill{height:100%;background:var(--amber);width:0%;}
+
+.reveal-toggle{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  cursor:pointer;
+  color:var(--red);
+  font-size:14px;
+  font-weight:500;
+  user-select:none;
+}
+.reveal-toggle .caret{transition:transform .2s ease;display:inline-block;}
+.reveal-toggle.open .caret{transform:rotate(90deg);}
+
+.answer-box{
+  display:none;
+  margin-top:12px;
+  background:var(--red-bg);
+  border:1px solid var(--red);
+  border-radius:8px;
+  padding:14px 16px;
+}
+.answer-box.show{display:block;}
+.answer-box .ai-note{
+  font-size:11px;
+  text-transform:none;
+  color:var(--red);
+  opacity:.8;
+  margin-bottom:8px;
+  font-weight:500;
+}
+.answer-box .sol{
+  font-size:14.5px;
+  line-height:1.7;
+  color:var(--ink);
+  white-space:pre-line;
+}
+.answer-box .final{
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px dashed var(--red);
+  font-weight:600;
+  font-size:15px;
+}
+
+.mark-row{
+  display:flex;
+  gap:10px;
+  margin-top:14px;
+}
+.mark-btn{
+  flex:1;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid var(--chip-border);
+  background:var(--paper);
+  cursor:pointer;
+  font-size:14px;
+  font-family:'IBM Plex Sans',sans-serif;
+  font-weight:500;
+  color:var(--ink);
+}
+.mark-btn.correct:hover{border-color:var(--green);color:var(--green);}
+.mark-btn.wrong:hover{border-color:var(--red);color:var(--red);}
+
+.feedback-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-top:6px;
+  flex-wrap:wrap;
+}
+.feedback-msg{font-size:13.5px;color:var(--ink-soft);}
+.feedback-msg.good{color:var(--green);}
+.feedback-msg.bad{color:var(--red);}
+
+.mastered-line{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.mastered-line .msg{color:var(--green);font-size:14px;font-weight:500;}
+.link-btn{
+  background:none;border:none;color:var(--ink-soft);
+  font-size:12.5px;text-decoration:underline;cursor:pointer;padding:0;
+  font-family:'IBM Plex Sans',sans-serif;
+}
+.empty-msg{color:var(--ink-soft);font-size:14px;padding:30px 0;text-align:center;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="head">
+    <h1>数学错题库</h1>
+    <p class="sub">PSLE Math · 按 Booklet 和主题分类 · 开始做题 30 秒后可查看 AI 解答，连续答对 2 次即为掌握</p>
+    <div class="namebox">
+      <span>姓名 Name: ________</span>
+      <span>日期 Date: ________</span>
+    </div>
+  </header>
+
+  <div class="progress-row">
+    <div class="num" id="progressNum">0 / 0</div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="progress-label">题目已掌握</div>
+  </div>
+
+  <div class="filters" id="bookletFilters"></div>
+  <div class="filters" id="topicFilters"></div>
+  <div class="filters section-end" id="statusFilters"></div>
+
+  <div id="groups"></div>
+
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    id:"ratio_bookshop",
+    booklet:"paper2",
+    topic:"ratio",
+    source:"P6 Prelim · Q17",
+    stem:"In a bookshop, for every 3 files sold, 1 pencil case was sold. The total amount collected was $1176. The amount collected from files was $147 more than the amount collected from pencil cases. Each pencil case was sold for $3 more than a file.",
+    parts:["How many pencil cases were sold?"],
+    solution:"Files revenue + Pencil-case revenue = $1176\nFiles revenue − Pencil-case revenue = $147\n\nSo Files revenue = (1176 + 147) ÷ 2 = $661.50\nPencil-case revenue = (1176 − 147) ÷ 2 = $514.50\n\nLet n = number of pencil cases sold, so 3n = number of files sold.\nLet f = price of 1 file, so (f + 3) = price of 1 pencil case.\n\n3n × f = 661.50  →  nf = 220.50\nn × (f + 3) = 514.50  →  nf + 3n = 514.50\n\nSubstitute nf = 220.50 into the second equation:\n220.50 + 3n = 514.50\n3n = 294\nn = 98\n\nCheck: f = 220.50 ÷ 98 = $2.25 per file, pencil case = $5.25.\n3 × 98 × 2.25 = $661.50 ✓   98 × 5.25 = $514.50 ✓   total = $1176 ✓",
+    final:"98 pencil cases were sold.",
+  },
+  {
+    id:"ratio_teams",
+    booklet:"paper2",
+    topic:"ratio",
+    source:"P6 Prelim · Q17",
+    stem:"There were 16 more students in Team A than in Team B in a competition. 1/4 of the students in Team A and 3/7 of the students in Team B were girls. The number of boys was twice the number of girls in the competition.",
+    parts:["How many boys were there altogether?"],
+    solution:"Let A = number of students in Team A, B = number in Team B.\nA = B + 16\n\nGirls in A = 1/4 A  →  boys in A = 3/4 A\nGirls in B = 3/7 B  →  boys in B = 4/7 B\n\nTotal boys = 2 × total girls:\n3/4 A + 4/7 B = 2 × (1/4 A + 3/7 B)\n3/4 A + 4/7 B = 1/2 A + 6/7 B\n(3/4 − 1/2) A = (6/7 − 4/7) B\n1/4 A = 2/7 B\nA = 8/7 B\n\nSince A = B + 16:\n8/7 B = B + 16\n1/7 B = 16\nB = 112,  A = 128\n\nGirls in A = 1/4 × 128 = 32, boys in A = 96\nGirls in B = 3/7 × 112 = 48, boys in B = 64\nTotal boys = 96 + 64 = 160\n(Check: total girls = 32 + 48 = 80, and 160 = 2 × 80 ✓)",
+    final:"There were 160 boys altogether.",
+  },
+  {
+    id:"frac_piescupcakes",
+    booklet:"paper2",
+    topic:"fractions",
+    source:"P6 Prelim · Q12",
+    stem:"Mrs Brown bought 2/5 as many cupcakes as pies for a party. She spent 3/4 as much on each cupcake as each pie. Each cupcake cost $4.50. She paid $504 more on the pies than the cupcakes.",
+    parts:["(a) How much did she pay for each pie?","(b) How many pies did she buy?"],
+    solution:"(a) Cost per cupcake = 3/4 × cost per pie\nCost per pie = $4.50 ÷ 3 × 4 = $6\n\n(b) Since cupcakes = 2/5 × pies, the ratio pies : cupcakes = 5 : 2.\nLet pies = 5u, cupcakes = 2u.\n\nTotal spent on pies = 5u × $6 = $30u\nTotal spent on cupcakes = 2u × $4.50 = $9u\n\nPies total − cupcakes total = $504:\n30u − 9u = 504\n21u = 504\nu = 24\n\nNumber of pies = 5u = 5 × 24 = 120",
+    final:"(a) $6 per pie   (b) 120 pies",
+  },
+  {
+    id:"frac_mangoes",
+    booklet:"paper2",
+    topic:"fractions",
+    source:"P6 Prelim · Q11",
+    stem:"A fruit seller had some mangoes. He sold 2/5 of them and donated 104 of them. He was left with 1/3 of the mangoes and packed them into 24 bags. Some bags contained 4 mangoes each while the rest contained 6 mangoes each.",
+    parts:["(a) How many mangoes were packed?","(b) How many bags contained 6 mangoes each?"],
+    solution:"(a) Let T = total mangoes.\nAfter selling 2/5 and donating 104, what's left is 1/3 of the total:\nT − 2/5 T − 104 = 1/3 T\n3/5 T − 104 = 1/3 T\n(3/5 − 1/3) T = 104\n(9/15 − 5/15) T = 104\n4/15 T = 104\nT = 390\n\nMangoes packed = 1/3 × 390 = 130\n\n(b) Let x = number of bags with 6 mangoes, so (24 − x) bags have 4 mangoes.\n4(24 − x) + 6x = 130\n96 − 4x + 6x = 130\n96 + 2x = 130\n2x = 34\nx = 17",
+    final:"(a) 130 mangoes were packed.   (b) 17 bags contained 6 mangoes each.",
+  },
+  {
+    id:"money_coins",
+    booklet:"paper2",
+    topic:"money",
+    source:"P6 Prelim · Q16",
+    stem:"Three girls, Mabel, Candy and Lilian, had the same number of coins. Mabel had only twenty-cent coins. Candy and Lilian each had a mix of twenty-cent and one-dollar coins. Candy had 36 one-dollar coins while Lilian had 13 one-dollar coins.",
+    parts:["(a) Of the three girls, who had the least and who had the most amount of money?","(b) Candy used half of her one-dollar coins and some of her twenty-cent coins to buy a book that cost $20.40. How many twenty-cent coins did Candy use?","(c) What was the difference in the total value of Mabel and Lilian's coins?"],
+    solution:"(a) All three have the same total number of coins, and a $1 coin is worth more than a 20-cent coin. So whoever holds more $1 coins holds more money.\nCandy has the most $1 coins (36) → most money.\nMabel has no $1 coins (all 20-cent) → least money.\n\n(b) Half of Candy's $1 coins = 36 ÷ 2 = 18 coins = $18\nAmount still needed = $20.40 − $18 = $2.40\nNumber of 20-cent coins = $2.40 ÷ $0.20 = 12\n\n(c) Let N = number of coins each girl has (same for all three).\nMabel's total value = 0.20N\nLilian's total value = 13(1) + (N − 13)(0.20) = 13 + 0.20N − 2.60 = 10.40 + 0.20N\n\nDifference (Lilian − Mabel) = (10.40 + 0.20N) − 0.20N = $10.40\n(The N cancels out — the actual number of coins doesn't need to be known.)",
+    final:"(a) Least: Mabel. Most: Candy.   (b) 12 twenty-cent coins.   (c) $10.40",
+  },
+  {
+    id:"frac_gary",
+    booklet:"paper2",
+    topic:"fractions",
+    source:"P6 Prelim · Q17",
+    stem:"Gary spent 5/8 of his money on 10 identical notebooks and 10 identical files. Then, he spent 5/6 of his remaining money on a bag.",
+    parts:["(a) What fraction of Gary's money was spent on the bag?","(b) Each file cost $4 more than each notebook and the bag cost $38 more than each notebook. How much money had Gary left?"],
+    solution:"(a) After spending 5/8 on notebooks and files, the remaining fraction is:\n1 − 5/8 = 3/8\n\nFraction spent on the bag = 5/6 × 3/8 = 15/48 = 5/16\n\n(b) Let N = price of 1 notebook, so file price F = N + 4, bag price B = N + 38.\n\nCost of 10 notebooks + 10 files = 10N + 10F = 10N + 10(N+4) = 20N + 40\nThis equals 5/8 of Gary's total money T:\n5/8 T = 20N + 40\nT = (20N + 40) × 8/5 = 32N + 64\n\nRemaining money after buying notebooks and files = 3/8 T = 3/8(32N + 64) = 12N + 24\nThis remaining money × 5/6 was spent on the bag:\nBag cost = 5/6 (12N + 24) = 10N + 20\n\nBut bag cost is also N + 38, so:\nN + 38 = 10N + 20\n18 = 9N\nN = 2\n\nSo T = 32(2) + 64 = 128\nMoney spent on notebooks & files = 5/8 × 128 = 80\nMoney remaining before the bag = 128 − 80 = 48\nBag cost = N + 38 = 2 + 38 = 40\nMoney left = 48 − 40 = 8\n(Check against part (a): 5/16 × 128 = 40, the bag's cost ✓)",
+    final:"(a) 5/16 of his money.   (b) Gary had $8 left.",
+  },
+  {
+    id:"ratio_erasers_pencils",
+    booklet:"paper2",
+    topic:"ratio",
+    source:"P6 Prelim · Q16",
+    stem:"At a school bookshop, erasers are only sold in packs of 4 (4 for $1.99) and pencils are only sold in packs of 5 (5 for $2.99). Mr Lim spent $139.45 buying some erasers and pencils for Children's Day. He put all the erasers and pencils into bags. The ratio of the number of erasers to the number of pencils in each bag was 2 : 3.",
+    parts:["How many pencils did he buy?"],
+    solution:"Erasers come in packs of 4 and pencils in packs of 5, so the total number of erasers must be a multiple of 4 and the total number of pencils a multiple of 5.\n\nLet the number of eraser packs = a and pencil packs = b.\nTotal erasers = 4a, total pencils = 5b.\nThese must be in the ratio 4a : 5b = 2 : 3\n→ 3(4a) = 2(5b)\n→ 12a = 10b\n→ 6a = 5b\n→ a : b = 5 : 6\n\nLet a = 5k packs of erasers, b = 6k packs of pencils.\nCost = 5k × $1.99 + 6k × $2.99 = $9.95k + $17.94k = $27.89k\n\nThis equals $139.45:\n27.89k = 139.45\nk = 5\n\nNumber of pencil packs = 6k = 30\nNumber of pencils = 30 × 5 = 150\n\n(Check: eraser packs = 5k = 25, cost = 25 × $1.99 = $49.75; pencil packs = 30, cost = 30 × $2.99 = $89.70; total = $49.75 + $89.70 = $139.45 ✓)",
+    final:"He bought 150 pencils.",
+  },
+  {
+    id:"frac_necklaces",
+    booklet:"paper2",
+    topic:"fractions",
+    source:"P6 Prelim · Q15",
+    stem:"Tina had a total of 754 pearl necklaces and bead necklaces for sale. After selling twice as many pearl necklaces as bead necklaces, she had 1/3 of the pearl necklaces and 1/4 of the bead necklaces left.",
+    parts:["What was the total number of pearl and bead necklaces left?"],
+    solution:"Let P = original number of pearl necklaces, B = original number of bead necklaces.\nP + B = 754\n\nShe had 1/3 of the pearls left, so she sold 2/3 P pearls.\nShe had 1/4 of the beads left, so she sold 3/4 B beads.\n\n\"Sold twice as many pearl necklaces as bead necklaces\" means:\n2/3 P = 2 × (3/4 B) = 3/2 B\nP = 3/2 B × 3/2 = 9/4 B\n\nSo P : B = 9 : 4. Let B = 4u, P = 9u.\nP + B = 13u = 754\nu = 58\n\nP = 9 × 58 = 522, B = 4 × 58 = 232\n\nPearls left = 1/3 × 522 = 174\nBeads left = 1/4 × 232 = 58\n\nTotal left = 174 + 58 = 232",
+    final:"The total number of pearl and bead necklaces left was 232.",
+  },
+  {
+    id:"ratio_flour",
+    booklet:"paper2",
+    topic:"ratio",
+    source:"P6 Prelim · Q11",
+    stem:"Mei and Ann each used the same amount of flour to bake some muffins and doughnuts. Mei made 108 doughnuts and had 640 g of flour left. Ann made 48 muffins and had 1.96 kg of flour left. The mass of flour used to make 3 muffins was the same as that for making 4 doughnuts.",
+    parts:["(a) What was the mass of flour used to make 1 doughnut?","(b) Mei and Ann decided to combine both their remaining flour to make doughnuts. What was the most number of doughnuts they could make altogether?"],
+    solution:"(a) Let d = mass of flour per doughnut, m = mass of flour per muffin.\nGiven 3m = 4d, so m = 4/3 d.\n\nMei's total flour = flour for 108 doughnuts + 640 g leftover = 108d + 640\nAnn's total flour = flour for 48 muffins + 1960 g leftover = 48m + 1960 = 48(4/3 d) + 1960 = 64d + 1960\n\nBoth started with the same total amount of flour:\n108d + 640 = 64d + 1960\n44d = 1320\nd = 30\n\n(b) Combined leftover flour = 640 g + 1960 g = 2600 g\nEach doughnut needs 30 g:\n2600 ÷ 30 = 86 remainder 20\n\nSo only 86 whole doughnuts can be made (the remaining 20 g isn't enough for one more).",
+    final:"(a) 30 g of flour was used per doughnut.   (b) They could make 86 doughnuts altogether.",
+  },
+  {
+    id:"avg_goldfish",
+    booklet:"bookletB",
+    topic:"average",
+    source:"Booklet B · Q1",
+    stem:"Mr Chen bought some goldfish at $10 each. He also bought an equal number of angelfish at a different price. The average price of a goldfish and an angelfish was $7. Mr Chen paid $54 more for the goldfish than the angelfish he bought.",
+    parts:["How many goldfish did he buy?"],
+    solution:"Average price of a goldfish and an angelfish = $7, and a goldfish costs $10.\nSo: (10 + angelfish price) ÷ 2 = 7\n10 + angelfish price = 14\nAngelfish price = $4\n\nLet n = number of goldfish = number of angelfish (equal number bought).\nTotal paid for goldfish = 10n, total paid for angelfish = 4n.\n\nGoldfish total − angelfish total = $54:\n10n − 4n = 54\n6n = 54\nn = 9",
+    final:"He bought 9 goldfish.",
+  },
+  {
+    id:"ratio_cookies",
+    booklet:"bookletB",
+    topic:"ratio",
+    source:"Booklet B · Q2",
+    stem:"There are three types of cookies in a box. The ratio of the number of walnut cookies to chocolate cookies is 4 : 5. The ratio of the number of raisin cookies to the total number of walnut and chocolate cookies is 5 : 6.",
+    parts:["What fraction of the cookies in the box are chocolate cookies?"],
+    solution:"Let walnut = 4u, chocolate = 5u.\nWalnut + chocolate = 9u\n\nRaisin : (walnut + chocolate) = 5 : 6, so raisin = 5/6 × 9u = 7.5u\n\nTotal cookies = walnut + chocolate + raisin = 9u + 7.5u = 16.5u\n\nFraction that are chocolate = 5u ÷ 16.5u = 5/16.5 = 10/33",
+    final:"10/33 of the cookies are chocolate cookies.",
+  },
+  {
+    id:"ratio_mangoes_offer",
+    booklet:"bookletB",
+    topic:"ratio",
+    source:"Booklet B · Q3",
+    stem:"Special offer: $10 for one box of 15 mangoes. Three friends shared the cost of 60 mangoes in the ratio 1 : 2 : 2.",
+    parts:["What was the cost for the smallest share?"],
+    solution:"60 mangoes ÷ 15 mangoes per box = 4 boxes needed\nTotal cost = 4 × $10 = $40\n\nThe cost is shared in the ratio 1 : 2 : 2, total parts = 1 + 2 + 2 = 5\n\nSmallest share = 1/5 × $40 = $8",
+    final:"The cost for the smallest share was $8.",
+  },
+  {
+    id:"ratio_circles",
+    booklet:"bookletB",
+    topic:"ratio",
+    source:"Booklet B · Q4",
+    stem:"Ming drew three circles to form a figure. The areas of the circles were in the ratio 1 : 4 : 16. She then shaded some parts of the figure as shown: the largest circle is shaded, the medium circle (sitting inside it, touching the top) is left unshaded, and the smallest circle (sitting inside the medium circle, also touching the top) is shaded again.",
+    parts:["What fraction of the figure was shaded?"],
+    solution:"Using the given area ratio, let the smallest circle's area = 1 unit, medium = 4 units, largest = 16 units.\n\nThe figure's total area = area of the largest circle = 16 units.\n\nShaded area = largest circle − medium circle (the unshaded ring) + smallest circle (shaded again inside)\n= 16 − 4 + 1\n= 13 units\n\nFraction shaded = 13/16",
+    final:"13/16 of the figure was shaded.",
+    diagram:`<svg viewBox="0 0 200 200" width="100%" style="max-width:220px;display:block;margin:0 auto"><circle cx="100" cy="100" r="80" fill="var(--ink-soft)" stroke="var(--ink)" stroke-width="2"/><circle cx="100" cy="60" r="40" fill="var(--paper-2)" stroke="var(--ink)" stroke-width="2"/><circle cx="100" cy="40" r="20" fill="var(--ink-soft)" stroke="var(--ink)" stroke-width="2"/></svg>`,
+  },
+  {
+    id:"avg_2digit",
+    booklet:"bookletB",
+    topic:"average",
+    source:"Booklet B · Q5",
+    stem:"The average of three different 2-digit numbers is 25.",
+    parts:["Of the three numbers, find the largest possible number."],
+    solution:"Sum of the three numbers = 25 × 3 = 75\n\nTo make the largest number as big as possible, make the other two numbers as small as possible — but they must be different 2-digit numbers (and different from each other and from the largest).\n\nSmallest possible 2-digit number = 10\nNext smallest, different from 10 = 11\n\nLargest number = 75 − 10 − 11 = 54",
+    final:"The largest possible number is 54.",
+  },
+  {
+    id:"angle_parallelogram2",
+    booklet:"bookletB",
+    topic:"angles",
+    source:"Booklet B · Q6",
+    stem:"ABCD is a parallelogram. AED and BFC are straight lines (E lies on AD, F lies on BC). ∠DEF = 108° and ∠BFA is a right angle.",
+    parts:["Find ∠AFE."],
+    solution:"Since AD is parallel to BC (opposite sides of the parallelogram), and AF is a transversal cutting both lines:\n∠DAF and ∠AFB are alternate angles, so ∠DAF = ∠AFB = 90° (given)\n\nSince E lies on AD, ∠EAF = ∠DAF = 90°\n\nSince A, E, D lie on a straight line, ∠AEF and ∠DEF are supplementary:\n∠AEF = 180° − 108° = 72°\n\nIn triangle AEF, the angles sum to 180°:\n∠AFE = 180° − ∠EAF − ∠AEF = 180° − 90° − 72° = 18°",
+    final:"∠AFE = 18°",
+    diagram:`<svg viewBox="0 0 400 280" width="100%" style="max-width:360px;display:block;margin:0 auto"><polygon points="90,50 340,70 300,250 50,230" fill="none" stroke="var(--ink)" stroke-width="2"/><line x1="90" y1="50" x2="334" y2="97" stroke="var(--ink)" stroke-width="1.5"/><line x1="76" y1="113" x2="334" y2="97" stroke="var(--ink)" stroke-width="1.5"/><polygon points="334,97 320.3,94.4 323.3,80.7 337,83.3" fill="none" stroke="var(--ink)" stroke-width="1.5"/><circle cx="90" cy="50" r="3" fill="var(--ink)"/><circle cx="340" cy="70" r="3" fill="var(--ink)"/><circle cx="300" cy="250" r="3" fill="var(--ink)"/><circle cx="50" cy="230" r="3" fill="var(--ink)"/><circle cx="76" cy="113" r="3" fill="var(--ink)"/><circle cx="334" cy="97" r="3" fill="var(--ink)"/><text x="80" y="40" font-size="15" fill="var(--ink)">A</text><text x="348" y="68" font-size="15" fill="var(--ink)">B</text><text x="306" y="270" font-size="15" fill="var(--ink)">C</text><text x="30" y="238" font-size="15" fill="var(--ink)">D</text><text x="52" y="112" font-size="15" fill="var(--ink)">E</text><text x="344" y="95" font-size="15" fill="var(--ink)">F</text><text x="88" y="128" font-size="13" fill="var(--ink)">108°</text></svg>`,
+  },
+  {
+    id:"decimal_27",
+    booklet:"bookletB",
+    topic:"decimals",
+    source:"Booklet B · Q7",
+    stem:"Find the value of 2 ÷ 7.",
+    parts:["Give your answer correct to 2 decimal places."],
+    solution:"2 ÷ 7 = 0.285714285714...\n\nLooking at the 3rd decimal place (5) to round to 2 decimal places:\n0.285714... → 0.29 (since the 3rd digit, 5, rounds the 2nd digit up from 8 to 9)",
+    final:"2 ÷ 7 ≈ 0.29",
+  },
+  {
+    id:"wn_fourclasses",
+    booklet:"bookletB",
+    topic:"wholenumbers",
+    source:"Booklet B · Q8",
+    stem:"Four classes A, B, C and D raised money for a charity. Classes A and B raised a total of $108. Together, classes B, C and D raised a total of $180. The total amount of money raised by all 4 classes is 5 times the amount that class B raised.",
+    parts:["How much money did class B raise?"],
+    solution:"Let the total raised by all 4 classes = Total, and class B's amount = B.\n\nA + B = 108\nB + C + D = 180\n\nAdding these two equations:\n(A + B) + (B + C + D) = 108 + 180\nA + 2B + C + D = 288\n(A + B + C + D) + B = 288\nTotal + B = 288\n\nGiven Total = 5B:\n5B + B = 288\n6B = 288\nB = 48\n\n(Check: Total = 5 × 48 = 240. A = 108 − 48 = 60. C + D = 180 − 48 = 132. A+B+C+D = 60+48+132 = 240 ✓)",
+    final:"Class B raised $48.",
+  },
+  {
+    id:"vol_cuboids",
+    booklet:"bookletB",
+    topic:"volume",
+    source:"Booklet B · Q9",
+    stem:"Jasmin formed two cuboids with unit cubes. The length, breadth and height of the bigger cuboid are 2 times those of the smaller cuboid. She used 384 unit cubes to form the bigger cuboid.",
+    parts:["How many unit cubes did she use to form the smaller cuboid?"],
+    solution:"When length, breadth and height are all scaled by 2, the volume scales by 2 × 2 × 2 = 8 times.\n\nSo: bigger cuboid's volume = 8 × smaller cuboid's volume\n384 = 8 × smaller volume\nSmaller volume = 384 ÷ 8 = 48",
+    final:"She used 48 unit cubes to form the smaller cuboid.",
+  },
+  {
+    id:"frac_norah_flour",
+    booklet:"bookletB",
+    topic:"fractions",
+    source:"Booklet B · Q10",
+    stem:"Norah used 1/5 kg of flour to make muffins and 1/2 kg of flour to make cookies. After that, she had 360 g of flour left.",
+    parts:["How many kilograms of flour did she have at first?"],
+    solution:"Flour used = 1/5 kg + 1/2 kg = 2/10 + 5/10 = 7/10 kg = 0.7 kg\n\nFlour left = 360 g = 0.36 kg\n\nFlour she had at first = flour used + flour left\n= 0.7 kg + 0.36 kg\n= 1.06 kg",
+    final:"She had 1.06 kg of flour at first.",
+  },
+  {
+    id:"area_dotgrid",
+    booklet:"bookletB",
+    topic:"area",
+    source:"Booklet B · Q11",
+    stem:"A trapezium ABCD and a right-angled triangle ABE are drawn on a square grid inside a box (AB || DC, right angles at B and D). By joining dots on the grid with straight lines:",
+    parts:["(a) Draw another trapezium ABCF such that AF is longer than BC.","(b) Draw another triangle ABG such that it has the same area as triangle ABE. Triangle ABG must not overlap with trapezium ABCD."],
+    solution:"This is a construction question — there isn't a single fixed answer, but here is the reasoning and one valid way to do each part (using grid steps counted from A, columns right / rows down):\n\n(a) AB and DC are parallel in the original trapezium. For ABCF to also be a trapezium with AB as one of the parallel sides, F must be placed so that CF is parallel to AB (same grid slope as AB), and the new side AF must be longer than BC (which measures √10 grid units in the original figure).\nExample: keeping A, B, C fixed, place F 4 steps right and 2 steps up from A itself is one valid path — concretely, moving from C in the same direction as A→B (2 right, 1 up) repeated: F = C + (2,−1) twice gives a point where AF = √50, which is longer than BC = √10. Any point that keeps CF parallel to AB and makes AF longer than BC works — answers may vary.\n\n(b) Triangles with the same base AB have equal area when their third vertex lies on a line through E that is parallel to AB (same perpendicular distance from AB as E). So G can be any other dot on that line through E (parallel to AB), as long as triangle ABG lands on the opposite/clear side so it doesn't overlap trapezium ABCD.\nExample: take the point 2 grid-steps along the direction A→B starting from E — this lands on the same parallel line as E, giving triangle ABG the same area as ABE, and it sits away from the trapezium (no overlap). Answers may vary, as long as G is a lattice point on the line through E parallel to AB, on the non-overlapping side.",
+    final:"(a) Any F with CF ∥ AB and AF > BC works (e.g. F two grid-steps beyond C, in the same direction as A→B, twice). (b) Any G on the line through E parallel to AB, clear of trapezium ABCD, works (e.g. G two grid-steps along that line from E).",
+    diagram:`<svg viewBox="0 0 364 364" width="100%" style="max-width:340px;display:block;margin:0 auto"><circle cx="30" cy="30" r="2.5" fill="var(--ink-soft)"/><circle cx="68" cy="30" r="2.5" fill="var(--ink-soft)"/><circle cx="106" cy="30" r="2.5" fill="var(--ink-soft)"/><circle cx="144" cy="30" r="2.5" fill="var(--ink-soft)"/><circle cx="182" cy="30" r="2.5" fill="var(--ink-soft)"/><circle cx="220" cy="30" r="2.5" fill="var(--ink-soft)"/><circle cx="258" cy="30" r="2.5" fill="var(--ink-soft)"/><circle cx="296" cy="30" r="2.5" fill="var(--ink-soft)"/><circle cx="334" cy="30" r="2.5" fill="var(--ink-soft)"/><circle cx="30" cy="68" r="2.5" fill="var(--ink-soft)"/><circle cx="68" cy="68" r="2.5" fill="var(--ink-soft)"/><circle cx="106" cy="68" r="2.5" fill="var(--ink-soft)"/><circle cx="144" cy="68" r="2.5" fill="var(--ink-soft)"/><circle cx="182" cy="68" r="2.5" fill="var(--ink-soft)"/><circle cx="220" cy="68" r="2.5" fill="var(--ink-soft)"/><circle cx="258" cy="68" r="2.5" fill="var(--ink-soft)"/><circle cx="296" cy="68" r="2.5" fill="var(--ink-soft)"/><circle cx="334" cy="68" r="2.5" fill="var(--ink-soft)"/><circle cx="30" cy="106" r="2.5" fill="var(--ink-soft)"/><circle cx="68" cy="106" r="2.5" fill="var(--ink-soft)"/><circle cx="106" cy="106" r="2.5" fill="var(--ink-soft)"/><circle cx="144" cy="106" r="2.5" fill="var(--ink-soft)"/><circle cx="182" cy="106" r="2.5" fill="var(--ink-soft)"/><circle cx="220" cy="106" r="2.5" fill="var(--ink-soft)"/><circle cx="258" cy="106" r="2.5" fill="var(--ink-soft)"/><circle cx="296" cy="106" r="2.5" fill="var(--ink-soft)"/><circle cx="334" cy="106" r="2.5" fill="var(--ink-soft)"/><circle cx="30" cy="144" r="2.5" fill="var(--ink-soft)"/><circle cx="68" cy="144" r="2.5" fill="var(--ink-soft)"/><circle cx="106" cy="144" r="2.5" fill="var(--ink-soft)"/><circle cx="144" cy="144" r="2.5" fill="var(--ink-soft)"/><circle cx="182" cy="144" r="2.5" fill="var(--ink-soft)"/><circle cx="220" cy="144" r="2.5" fill="var(--ink-soft)"/><circle cx="258" cy="144" r="2.5" fill="var(--ink-soft)"/><circle cx="296" cy="144" r="2.5" fill="var(--ink-soft)"/><circle cx="334" cy="144" r="2.5" fill="var(--ink-soft)"/><circle cx="30" cy="182" r="2.5" fill="var(--ink-soft)"/><circle cx="68" cy="182" r="2.5" fill="var(--ink-soft)"/><circle cx="106" cy="182" r="2.5" fill="var(--ink-soft)"/><circle cx="144" cy="182" r="2.5" fill="var(--ink-soft)"/><circle cx="182" cy="182" r="2.5" fill="var(--ink-soft)"/><circle cx="220" cy="182" r="2.5" fill="var(--ink-soft)"/><circle cx="258" cy="182" r="2.5" fill="var(--ink-soft)"/><circle cx="296" cy="182" r="2.5" fill="var(--ink-soft)"/><circle cx="334" cy="182" r="2.5" fill="var(--ink-soft)"/><circle cx="30" cy="220" r="2.5" fill="var(--ink-soft)"/><circle cx="68" cy="220" r="2.5" fill="var(--ink-soft)"/><circle cx="106" cy="220" r="2.5" fill="var(--ink-soft)"/><circle cx="144" cy="220" r="2.5" fill="var(--ink-soft)"/><circle cx="182" cy="220" r="2.5" fill="var(--ink-soft)"/><circle cx="220" cy="220" r="2.5" fill="var(--ink-soft)"/><circle cx="258" cy="220" r="2.5" fill="var(--ink-soft)"/><circle cx="296" cy="220" r="2.5" fill="var(--ink-soft)"/><circle cx="334" cy="220" r="2.5" fill="var(--ink-soft)"/><circle cx="30" cy="258" r="2.5" fill="var(--ink-soft)"/><circle cx="68" cy="258" r="2.5" fill="var(--ink-soft)"/><circle cx="106" cy="258" r="2.5" fill="var(--ink-soft)"/><circle cx="144" cy="258" r="2.5" fill="var(--ink-soft)"/><circle cx="182" cy="258" r="2.5" fill="var(--ink-soft)"/><circle cx="220" cy="258" r="2.5" fill="var(--ink-soft)"/><circle cx="258" cy="258" r="2.5" fill="var(--ink-soft)"/><circle cx="296" cy="258" r="2.5" fill="var(--ink-soft)"/><circle cx="334" cy="258" r="2.5" fill="var(--ink-soft)"/><circle cx="30" cy="296" r="2.5" fill="var(--ink-soft)"/><circle cx="68" cy="296" r="2.5" fill="var(--ink-soft)"/><circle cx="106" cy="296" r="2.5" fill="var(--ink-soft)"/><circle cx="144" cy="296" r="2.5" fill="var(--ink-soft)"/><circle cx="182" cy="296" r="2.5" fill="var(--ink-soft)"/><circle cx="220" cy="296" r="2.5" fill="var(--ink-soft)"/><circle cx="258" cy="296" r="2.5" fill="var(--ink-soft)"/><circle cx="296" cy="296" r="2.5" fill="var(--ink-soft)"/><circle cx="334" cy="296" r="2.5" fill="var(--ink-soft)"/><circle cx="30" cy="334" r="2.5" fill="var(--ink-soft)"/><circle cx="68" cy="334" r="2.5" fill="var(--ink-soft)"/><circle cx="106" cy="334" r="2.5" fill="var(--ink-soft)"/><circle cx="144" cy="334" r="2.5" fill="var(--ink-soft)"/><circle cx="182" cy="334" r="2.5" fill="var(--ink-soft)"/><circle cx="220" cy="334" r="2.5" fill="var(--ink-soft)"/><circle cx="258" cy="334" r="2.5" fill="var(--ink-soft)"/><circle cx="296" cy="334" r="2.5" fill="var(--ink-soft)"/><circle cx="334" cy="334" r="2.5" fill="var(--ink-soft)"/><polygon points="30,220 106,182 220,220 68,296" fill="none" stroke="var(--ink)" stroke-width="2.5"/><line x1="30" y1="220" x2="68" y2="106" stroke="var(--ink)" stroke-width="2.5"/><line x1="106" y1="182" x2="68" y2="106" stroke="var(--ink)" stroke-width="2.5"/><text x="10" y="216" font-size="15" fill="var(--ink)">A</text><text x="110" y="176" font-size="15" fill="var(--ink)">B</text><text x="226" y="216" font-size="15" fill="var(--ink)">C</text><text x="72" y="316" font-size="15" fill="var(--ink)">D</text><text x="72" y="100" font-size="15" fill="var(--ink)">E</text></svg>`,
+  },
+  {
+    id:"spatial_cubes",
+    booklet:"bookletB",
+    topic:"spatial",
+    source:"Booklet B · Q12",
+    stem:"Usha builds a solid using 8 unit cubes. The front view is shown.",
+    parts:["(a) Draw the side view on the grid.","(b) Find the greatest number of unit cubes Usha can add to the solid without changing the front view and side view."],
+    solution:"Label the two horizontal directions as width (3 across) and depth (3 across, at right angles to width), with height 2 up. One of the two 3×2 views is fully solid; the other has its top-middle cell empty (a U-shape) — that U-shaped view is the one shown on the right below, and matches the hand-drawn attempt on the worksheet, which is in fact the correct answer for part (a), not scratch work to erase.\n\n(a) The U-shaped view (3 columns × 2 rows, top-middle cell empty) is the one to draw — shade every cell except the top-middle one, as shown below.\n\n(b) To find the greatest number of cubes that could be added without changing either view, work layer by layer:\nFor each height layer, the maximum possible cubes = (number of filled columns in the fully-solid view at that height) × (number of filled positions in the U-shaped view at that height).\n\nBottom layer (height 1): the fully-solid view has all 3 columns filled; the U-shaped view also has all 3 positions filled along its bottom row → max = 3 × 3 = 9\nTop layer (height 2): the fully-solid view has all 3 columns filled; the U-shaped view has only 2 positions filled along its top row (the middle one is the empty notch) → max = 3 × 2 = 6\n\nMaximum total volume consistent with both views = 9 + 6 = 15\n\nUsha currently has 8 cubes, so the greatest number that could be added = 15 − 8 = 7",
+    final:"(a) The side view is the U-shaped grid: 3 columns × 2 rows, shaded everywhere except the top-middle cell.   (b) 7 more unit cubes could be added.",
+    diagram:`<svg viewBox="0 0 320 262" width="100%" style="max-width:320px;display:block;margin:0 auto"><polygon points="40.0,127.0 80.0,147.0 80.0,101.0 40.0,81.0" fill="var(--paper-2)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/><polygon points="280.0,127.0 240.0,147.0 240.0,101.0 280.0,81.0" fill="var(--rule)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/><polygon points="80.0,147.0 120.0,167.0 120.0,121.0 80.0,101.0" fill="var(--paper-2)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/><polygon points="200.0,81.0 240.0,101.0 200.0,121.0 160.0,101.0" fill="var(--paper)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/><polygon points="240.0,147.0 200.0,167.0 200.0,121.0 240.0,101.0" fill="var(--rule)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/><polygon points="80.0,15.0 120.0,35.0 80.0,55.0 40.0,35.0" fill="var(--paper)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/><polygon points="40.0,81.0 80.0,101.0 80.0,55.0 40.0,35.0" fill="var(--paper-2)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/><polygon points="240.0,15.0 280.0,35.0 240.0,55.0 200.0,35.0" fill="var(--paper)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/><polygon points="200.0,81.0 240.0,101.0 240.0,55.0 200.0,35.0" fill="var(--paper-2)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/><polygon points="280.0,81.0 240.0,101.0 240.0,55.0 280.0,35.0" fill="var(--rule)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/><polygon points="160.0,101.0 200.0,121.0 160.0,141.0 120.0,121.0" fill="var(--paper)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/><polygon points="120.0,167.0 160.0,187.0 160.0,141.0 120.0,121.0" fill="var(--paper-2)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/><polygon points="200.0,167.0 160.0,187.0 160.0,141.0 200.0,121.0" fill="var(--rule)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/><polygon points="120.0,35.0 160.0,55.0 120.0,75.0 80.0,55.0" fill="var(--paper)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/><polygon points="80.0,101.0 120.0,121.0 120.0,75.0 80.0,55.0" fill="var(--paper-2)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/><polygon points="160.0,101.0 120.0,121.0 120.0,75.0 160.0,55.0" fill="var(--rule)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/><line x1="58.0" y1="181.0" x2="77.9" y2="164.2" stroke="var(--ink)" stroke-width="2"/><polygon points="84.0,159.0 78.8,169.9 72.4,162.3" fill="var(--ink)"/><line x1="262.0" y1="181.0" x2="242.1" y2="164.2" stroke="var(--ink)" stroke-width="2"/><polygon points="236.0,159.0 247.6,162.3 241.2,169.9" fill="var(--ink)"/><text x="58.0" y="199.0" font-size="14" text-anchor="middle" fill="var(--ink)">Front view</text><text x="262.0" y="199.0" font-size="14" text-anchor="middle" fill="var(--ink)">Side view</text></svg>`,
+  },
+  {
+    id:"algebra_rectangle",
+    booklet:"bookletB",
+    topic:"algebra",
+    source:"Booklet B · Q13",
+    stem:"A rectangle has a top side of (5x + 15) cm, a left side of (4x − 6) cm, and a bottom side of 50 cm.",
+    parts:["Find the value of the breadth of the rectangle."],
+    solution:"In a rectangle, opposite sides are equal in length. The top and bottom sides are opposite sides, so:\n5x + 15 = 50\n5x = 35\nx = 7\n\nThe breadth is the left side, (4x − 6) cm:\n4(7) − 6 = 28 − 6 = 22 cm",
+    final:"The breadth of the rectangle is 22 cm.",
+    diagram:`<svg viewBox="0 0 320 200" width="100%" style="max-width:300px;display:block;margin:0 auto"><rect x="90" y="50" width="180" height="100" fill="none" stroke="var(--ink)" stroke-width="2"/><text x="120" y="38" font-size="14" fill="var(--ink)">(5x + 15) cm</text><text x="5" y="104" font-size="14" fill="var(--ink)">(4x - 6) cm</text><text x="150" y="168" font-size="14" fill="var(--ink)">50 cm</text></svg>`,
+  },
+  {
+    id:"area_parallelogram_grid",
+    booklet:"bookletB",
+    topic:"area",
+    source:"Booklet B · Q14",
+    stem:"A parallelogram ABCD is drawn on a square grid, together with a separate line segment PQ (used for a triangle PQR to be drawn, with PQ = QR and the same perimeter as ABCD).",
+    parts:["(a) Using the line PQ, draw triangle PQR such that it has the same perimeter as ABCD and PQ = QR.","(b) Find the ratio of area of ABCD to the area of PQR."],
+    solution:"Using the grid, ABCD has side lengths AB = DC = √5 grid units and BC = AD = √10 grid units, so:\nPerimeter of ABCD = 2(√5 + √10)\nArea of ABCD = 5 square grid units (base × height using the grid coordinates)\n\nThe segment PQ drawn on the grid measures √10 units — matching BC/AD. Since PQ = QR, QR = √10 too.\n\n(a) For triangle PQR to have the same perimeter as ABCD:\nPQ + QR + RP = 2√5 + 2√10\n√10 + √10 + RP = 2√5 + 2√10\nRP = 2√5\nSo R is any point that keeps QR = PQ = √10 and makes PR = 2√5 — found by drawing a circle of radius √10 from Q and a circle of radius 2√5 from P, and joining P and Q to where they meet.\n\n(b) With PQ = QR = √10 and PR = 2√5, triangle PQR is isosceles. Its height from Q to PR is:\nh = √(PQ² − (PR/2)²) = √(10 − 5) = √5\nArea of PQR = 1/2 × PR × h = 1/2 × 2√5 × √5 = 5 square grid units\n\nSince area of ABCD = 5 and area of PQR = 5, the ratio is 5 : 5 = 1 : 1",
+    final:"(a) R is placed so that QR = PQ and PR = 2√5 (construction — answers using this length are valid).   (b) Area of ABCD : Area of PQR = 1 : 1",
+    diagram:`<svg viewBox="0 0 550 244" width="100%" style="max-width:480px;display:block;margin:0 auto"><line x1="20" y1="20" x2="20" y2="224" stroke="var(--rule)" stroke-width="1" stroke-dasharray="2,3"/><line x1="54" y1="20" x2="54" y2="224" stroke="var(--rule)" stroke-width="1" stroke-dasharray="2,3"/><line x1="88" y1="20" x2="88" y2="224" stroke="var(--rule)" stroke-width="1" stroke-dasharray="2,3"/><line x1="122" y1="20" x2="122" y2="224" stroke="var(--rule)" stroke-width="1" stroke-dasharray="2,3"/><line x1="156" y1="20" x2="156" y2="224" stroke="var(--rule)" stroke-width="1" stroke-dasharray="2,3"/><line x1="190" y1="20" x2="190" y2="224" stroke="var(--rule)" stroke-width="1" stroke-dasharray="2,3"/><line x1="224" y1="20" x2="224" y2="224" stroke="var(--rule)" stroke-width="1" stroke-dasharray="2,3"/><line x1="258" y1="20" x2="258" y2="224" stroke="var(--rule)" stroke-width="1" stroke-dasharray="2,3"/><line x1="292" y1="20" x2="292" y2="224" stroke="var(--rule)" stroke-width="1" stroke-dasharray="2,3"/><line x1="326" y1="20" x2="326" y2="224" stroke="var(--rule)" stroke-width="1" stroke-dasharray="2,3"/><line x1="360" y1="20" x2="360" y2="224" stroke="var(--rule)" stroke-width="1" stroke-dasharray="2,3"/><line x1="394" y1="20" x2="394" y2="224" stroke="var(--rule)" stroke-width="1" stroke-dasharray="2,3"/><line x1="428" y1="20" x2="428" y2="224" stroke="var(--rule)" stroke-width="1" stroke-dasharray="2,3"/><line x1="462" y1="20" x2="462" y2="224" stroke="var(--rule)" stroke-width="1" stroke-dasharray="2,3"/><line x1="496" y1="20" x2="496" y2="224" stroke="var(--rule)" stroke-width="1" stroke-dasharray="2,3"/><line x1="530" y1="20" x2="530" y2="224" stroke="var(--rule)" stroke-width="1" stroke-dasharray="2,3"/><line x1="20" y1="20" x2="530" y2="20" stroke="var(--rule)" stroke-width="1" stroke-dasharray="2,3"/><line x1="20" y1="54" x2="530" y2="54" stroke="var(--rule)" stroke-width="1" stroke-dasharray="2,3"/><line x1="20" y1="88" x2="530" y2="88" stroke="var(--rule)" stroke-width="1" stroke-dasharray="2,3"/><line x1="20" y1="122" x2="530" y2="122" stroke="var(--rule)" stroke-width="1" stroke-dasharray="2,3"/><line x1="20" y1="156" x2="530" y2="156" stroke="var(--rule)" stroke-width="1" stroke-dasharray="2,3"/><line x1="20" y1="190" x2="530" y2="190" stroke="var(--rule)" stroke-width="1" stroke-dasharray="2,3"/><line x1="20" y1="224" x2="530" y2="224" stroke="var(--rule)" stroke-width="1" stroke-dasharray="2,3"/><polygon points="88,88 156,54 258,88 190,122" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.5"/><line x1="326" y1="190" x2="428" y2="156" stroke="var(--ink)" stroke-width="2.5"/><circle cx="326" cy="190" r="3" fill="var(--ink)"/><circle cx="428" cy="156" r="3" fill="var(--ink)"/><text x="66" y="94" font-size="14" fill="var(--ink)">A</text><text x="150" y="42" font-size="14" fill="var(--ink)">B</text><text x="264" y="94" font-size="14" fill="var(--ink)">C</text><text x="192" y="140" font-size="14" fill="var(--ink)">D</text><text x="310" y="208" font-size="14" fill="var(--ink)">P</text><text x="434" y="150" font-size="14" fill="var(--ink)">Q</text></svg>`,
+  }
+];
+
+const TOPIC_LABELS = {
+  ratio:"\u6bd4\u4f8b Ratio", fractions:"\u5206\u6570 Fractions", money:"\u94b1\u5e01 Money",
+  average:"\u5e73\u5747\u6570 Average", angles:"\u89d2\u5ea6 Angles", decimals:"\u5c0f\u6570 Decimals",
+  wholenumbers:"\u6574\u6570\u5e94\u7528 Whole Numbers", volume:"\u4f53\u79ef Volume",
+  area:"\u9762\u79ef Area", spatial:"\u7acb\u4f53\u56fe\u5f62 Spatial", algebra:"\u4ee3\u6570 Algebra"
+};
+const BOOKLET_LABELS = { bookletA:"Booklet A", bookletB:"Booklet B", paper2:"Paper 2" };
+const BOOKLET_ORDER = ["bookletA","bookletB","paper2"];
+const READY_SECONDS = 30;
+const STORE_KEY = "psle_math_wrongbook_v1";
+
+let store = {};
+try{ store = JSON.parse(localStorage.getItem(STORE_KEY) || "{}"); }catch(e){ store = {}; }
+function saveStore(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(store)); }catch(e){}
+}
+function getState(id){
+  if(!store[id]) store[id] = {streak:0, mastered:false};
+  return store[id];
+}
+
+let bookletFilter = "all";
+let topicFilter = "all";
+let statusFilter = "all";
+const runtime = {};
+QUESTIONS.forEach(q => runtime[q.id] = {phase:"idle", timerHandle:null, secondsLeft:READY_SECONDS});
+
+function topicsInBooklet(booklet){
+  const set = [];
+  QUESTIONS.forEach(q => {
+    if((booklet==="all" || q.booklet===booklet) && !set.includes(q.topic)) set.push(q.topic);
+  });
+  return set;
+}
+
+function renderFilters(){
+  const bf = document.getElementById("bookletFilters");
+  bf.innerHTML = "";
+  const label = document.createElement("div");
+  label.className = "filter-label";
+  label.textContent = "Booklet";
+  bf.appendChild(label);
+  bf.appendChild(mkChip("\u5168\u90e8 Booklet", bookletFilter==="all", () => { bookletFilter="all"; topicFilter="all"; render(); }));
+  BOOKLET_ORDER.forEach(b => {
+    const count = QUESTIONS.filter(q=>q.booklet===b).length;
+    if(count===0) return;
+    bf.appendChild(mkChip(BOOKLET_LABELS[b], bookletFilter===b, () => { bookletFilter=b; topicFilter="all"; render(); }));
+  });
+
+  const tf = document.getElementById("topicFilters");
+  tf.innerHTML = "";
+  const label2 = document.createElement("div");
+  label2.className = "filter-label";
+  label2.textContent = "\u4e3b\u9898 Topic";
+  tf.appendChild(label2);
+  tf.appendChild(mkChip("\u5168\u90e8\u4e3b\u9898", topicFilter==="all", () => { topicFilter="all"; render(); }));
+  topicsInBooklet(bookletFilter).forEach(t => {
+    tf.appendChild(mkChip(TOPIC_LABELS[t] || t, topicFilter===t, () => { topicFilter=t; render(); }));
+  });
+
+  const sf = document.getElementById("statusFilters");
+  sf.innerHTML = "";
+  const statuses = [["all","\u5168\u90e8\u72b6\u6001"],["unmastered","\u672a\u638c\u63e1"],["mastered","\u5df2\u638c\u63e1"]];
+  statuses.forEach(([key,lbl]) => {
+    sf.appendChild(mkChip(lbl, statusFilter===key, () => { statusFilter=key; render(); }));
+  });
+}
+function mkChip(label, active, onclick){
+  const b = document.createElement("button");
+  b.className = "chip" + (active ? " active" : "");
+  b.textContent = label;
+  b.onclick = onclick;
+  return b;
+}
+
+function updateProgress(){
+  const total = QUESTIONS.length;
+  const mastered = QUESTIONS.filter(q => getState(q.id).mastered).length;
+  document.getElementById("progressNum").textContent = mastered + " / " + total;
+  document.getElementById("progressFill").style.width = (total? (mastered/total*100) : 0) + "%";
+}
+
+function passesFilters(q){
+  if(bookletFilter !== "all" && q.booklet !== bookletFilter) return false;
+  if(topicFilter !== "all" && q.topic !== topicFilter) return false;
+  const st = getState(q.id);
+  if(statusFilter === "mastered" && !st.mastered) return false;
+  if(statusFilter === "unmastered" && st.mastered) return false;
+  return true;
+}
+
+function render(){
+  renderFilters();
+  updateProgress();
+  const groupsEl = document.getElementById("groups");
+  groupsEl.innerHTML = "";
+
+  let anyShown = false;
+  BOOKLET_ORDER.forEach(booklet => {
+    if(bookletFilter !== "all" && bookletFilter !== booklet) return;
+    let inBooklet = QUESTIONS.filter(q => q.booklet === booklet && passesFilters(q));
+    if(inBooklet.length === 0) return;
+    anyShown = true;
+
+    const bgroup = document.createElement("div");
+    bgroup.className = "booklet-group";
+    const btitle = document.createElement("div");
+    btitle.className = "booklet-title";
+    btitle.innerHTML = BOOKLET_LABELS[booklet] + ' <span class="count">(' + inBooklet.length + ' \u9898)</span>';
+    bgroup.appendChild(btitle);
+
+    const topicsHere = [];
+    inBooklet.forEach(q => { if(!topicsHere.includes(q.topic)) topicsHere.push(q.topic); });
+
+    topicsHere.forEach(topic => {
+      const qs = inBooklet.filter(q => q.topic === topic);
+      const group = document.createElement("div");
+      group.className = "topic-group";
+      const title = document.createElement("div");
+      title.className = "topic-title";
+      title.innerHTML = (TOPIC_LABELS[topic]||topic) + ' <span class="count">(' + qs.length + ' \u9898)</span>';
+      group.appendChild(title);
+      qs.forEach(q => group.appendChild(renderCard(q)));
+      bgroup.appendChild(group);
+    });
+
+    groupsEl.appendChild(bgroup);
+  });
+
+  if(!anyShown){
+    const empty = document.createElement("div");
+    empty.className = "empty-msg";
+    empty.textContent = "\u6ca1\u6709\u7b26\u5408\u6761\u4ef6\u7684\u9898\u76ee\u3002";
+    groupsEl.appendChild(empty);
+  }
+}
+
+function renderCard(q){
+  const st = getState(q.id);
+  const rt = runtime[q.id];
+
+  const card = document.createElement("div");
+  card.className = "card";
+  card.id = "card_" + q.id;
+
+  const top = document.createElement("div");
+  top.className = "card-top";
+  const tagRow = document.createElement("div");
+  tagRow.className = "tag-row";
+  const srcTag = document.createElement("span");
+  srcTag.className = "tag";
+  srcTag.textContent = q.source;
+  tagRow.appendChild(srcTag);
+  if(st.mastered){
+    const mTag = document.createElement("span");
+    mTag.className = "tag mastered";
+    mTag.textContent = "\u5df2\u638c\u63e1";
+    tagRow.appendChild(mTag);
+  }
+  top.appendChild(tagRow);
+
+  const dots = document.createElement("div");
+  dots.className = "streak-dots";
+  for(let i=0;i<2;i++){
+    const d = document.createElement("div");
+    d.className = "dot" + (i < st.streak ? " on" : "");
+    dots.appendChild(d);
+  }
+  top.appendChild(dots);
+  card.appendChild(top);
+
+  if(q.diagram){
+    const dbox = document.createElement("div");
+    dbox.className = "diagram-box";
+    dbox.innerHTML = q.diagram;
+    card.appendChild(dbox);
+  }
+
+  const qtext = document.createElement("div");
+  qtext.className = "qtext";
+  qtext.appendChild(document.createTextNode(q.stem));
+  if(q.parts && q.parts.length){
+    const ul = document.createElement(q.parts.length>1 ? "ul" : "div");
+    if(q.parts.length>1){
+      ul.className = "qparts";
+      q.parts.forEach(p => {
+        const li = document.createElement("li");
+        li.textContent = p;
+        ul.appendChild(li);
+      });
+    }else{
+      ul.style.marginTop = "8px";
+      ul.textContent = q.parts[0];
+    }
+    qtext.appendChild(ul);
+  }
+  card.appendChild(qtext);
+
+  const action = document.createElement("div");
+  action.className = "action-area";
+  action.id = "action_" + q.id;
+  card.appendChild(action);
+
+  renderAction(q, action);
+
+  return card;
+}
+
+function renderAction(q, container){
+  const rt = runtime[q.id];
+  const st = getState(q.id);
+  container.innerHTML = "";
+
+  if(rt.phase === "idle"){
+    const btn = document.createElement("button");
+    btn.className = "primary-btn";
+    btn.textContent = st.mastered ? "\u518d\u6b21\u6311\u6218" : "\u5f00\u59cb\u505a\u9898";
+    btn.onclick = () => startTimer(q);
+    container.appendChild(btn);
+    if(st.mastered){
+      const hint = document.createElement("span");
+      hint.style.marginLeft = "10px";
+      hint.style.fontSize = "12.5px";
+      hint.style.color = "var(--ink-soft)";
+      hint.textContent = "\u6b64\u9898\u5df2\u638c\u63e1\uff0c\u53ef\u9009\u62e9\u91cd\u65b0\u7ec3\u4e60";
+      container.appendChild(hint);
+    }
+    return;
+  }
+
+  if(rt.phase === "counting"){
+    const line = document.createElement("div");
+    line.className = "timer-line";
+    const track = document.createElement("div");
+    track.className = "timer-track";
+    const fill = document.createElement("div");
+    fill.className = "timer-fill";
+    fill.id = "fill_" + q.id;
+    fill.style.width = (100*(READY_SECONDS-rt.secondsLeft)/READY_SECONDS) + "%";
+    track.appendChild(fill);
+    line.appendChild(track);
+    const label = document.createElement("span");
+    label.id = "sec_" + q.id;
+    label.textContent = "\u89e3\u9898\u4e2d\u2026 " + rt.secondsLeft + " \u79d2\u540e\u53ef\u67e5\u770b\u7b54\u6848";
+    line.appendChild(label);
+    container.appendChild(line);
+    return;
+  }
+
+  if(rt.phase === "ready" || rt.phase === "revealed" || rt.phase === "marked"){
+    const toggle = document.createElement("div");
+    toggle.className = "reveal-toggle" + (rt.phase !== "ready" ? " open" : "");
+    toggle.innerHTML = '<span class="caret">\u25b8</span><span>' + (rt.phase==="ready" ? "\u67e5\u770b\u7b54\u6848" : "\u6536\u8d77 / \u5c55\u5f00\u7b54\u6848") + '</span>';
+    toggle.onclick = () => {
+      if(rt.phase === "ready"){ rt.phase = "revealed"; }
+      renderAction(q, container);
+      const box = container.querySelector(".answer-box");
+      if(box) box.classList.toggle("show");
+      container.querySelector(".reveal-toggle").classList.toggle("open");
+    };
+    container.appendChild(toggle);
+
+    const box = document.createElement("div");
+    box.className = "answer-box" + (rt.phase !== "ready" ? " show" : "");
+    const note = document.createElement("div");
+    note.className = "ai-note";
+    note.textContent = "AI \u89e3\u7b54 \u00b7 AI-generated solution";
+    box.appendChild(note);
+    const sol = document.createElement("div");
+    sol.className = "sol";
+    sol.textContent = q.solution;
+    box.appendChild(sol);
+    const fin = document.createElement("div");
+    fin.className = "final";
+    fin.textContent = q.final;
+    box.appendChild(fin);
+    container.appendChild(box);
+
+    if(rt.phase === "revealed"){
+      const markRow = document.createElement("div");
+      markRow.className = "mark-row";
+      const okBtn = document.createElement("button");
+      okBtn.className = "mark-btn correct";
+      okBtn.textContent = "\u2713 \u7b54\u5bf9";
+      okBtn.onclick = () => mark(q, true);
+      const noBtn = document.createElement("button");
+      noBtn.className = "mark-btn wrong";
+      noBtn.textContent = "\u2717 \u7b54\u9519";
+      noBtn.onclick = () => mark(q, false);
+      markRow.appendChild(okBtn);
+      markRow.appendChild(noBtn);
+      container.appendChild(markRow);
+    }
+
+    if(rt.phase === "marked"){
+      if(st.mastered){
+        const line = document.createElement("div");
+        line.className = "mastered-line";
+        const msg = document.createElement("span");
+        msg.className = "msg";
+        msg.textContent = "\ud83c\udf89 \u8fde\u7eed\u7b54\u5bf9 2 \u6b21\uff0c\u5df2\u638c\u63e1\uff01";
+        line.appendChild(msg);
+        const reset = document.createElement("button");
+        reset.className = "link-btn";
+        reset.textContent = "\u91cd\u65b0\u7ec3\u4e60\u6b64\u9898";
+        reset.onclick = () => { st.streak = 0; st.mastered = false; saveStore(); rt.phase = "idle"; render(); };
+        line.appendChild(reset);
+        container.appendChild(line);
+      }else{
+        const fb = document.createElement("div");
+        fb.className = "feedback-row";
+        const msg = document.createElement("span");
+        msg.className = "feedback-msg " + (rt.lastCorrect ? "good" : "bad");
+        msg.textContent = rt.lastCorrect ? ("\u7b54\u5bf9\uff01\u8fde\u7eed\u7b54\u5bf9 " + st.streak + "/2 \u6b21") : "\u7b54\u9519\u4e86\uff0cstreak \u5df2\u91cd\u7f6e\uff0c\u518d\u505a\u4e00\u6b21\u5427";
+        fb.appendChild(msg);
+        const again = document.createElement("button");
+        again.className = "ghost-btn";
+        again.textContent = "\u518d\u505a\u4e00\u6b21";
+        again.onclick = () => { rt.phase = "idle"; render(); };
+        fb.appendChild(again);
+        container.appendChild(fb);
+      }
+    }
+  }
+}
+
+function startTimer(q){
+  const rt = runtime[q.id];
+  rt.phase = "counting";
+  rt.secondsLeft = READY_SECONDS;
+  render();
+  rt.timerHandle = setInterval(() => {
+    rt.secondsLeft -= 1;
+    const secEl = document.getElementById("sec_" + q.id);
+    const fillEl = document.getElementById("fill_" + q.id);
+    if(secEl) secEl.textContent = "\u89e3\u9898\u4e2d\u2026 " + rt.secondsLeft + " \u79d2\u540e\u53ef\u67e5\u770b\u7b54\u6848";
+    if(fillEl) fillEl.style.width = (100*(READY_SECONDS-rt.secondsLeft)/READY_SECONDS) + "%";
+    if(rt.secondsLeft <= 0){
+      clearInterval(rt.timerHandle);
+      rt.phase = "ready";
+      render();
+    }
+  }, 1000);
+}
+
+function mark(q, correct){
+  const st = getState(q.id);
+  const rt = runtime[q.id];
+  rt.lastCorrect = correct;
+  if(correct){
+    st.streak = Math.min(st.streak + 1, 2);
+    if(st.streak >= 2) st.mastered = true;
+  }else{
+    st.streak = 0;
+  }
+  saveStore();
+  rt.phase = "marked";
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
