@@ -889,8 +889,11 @@ function renderAction(q, container){
     toggle.className = "reveal-toggle" + (rt.phase !== "ready" ? " open" : "");
     toggle.innerHTML = '<span class="caret">\u25b8</span><span>' + (rt.phase==="ready" ? "\u67e5\u770b\u7b54\u6848" : "\u6536\u8d77 / \u5c55\u5f00\u7b54\u6848") + '</span>';
     toggle.onclick = () => {
-      if(rt.phase === "ready"){ rt.phase = "revealed"; }
-      renderAction(q, container);
+      if(rt.phase === "ready"){
+        rt.phase = "revealed";
+        renderAction(q, container);
+        return;
+      }
       const box = container.querySelector(".answer-box");
       if(box) box.classList.toggle("show");
       container.querySelector(".reveal-toggle").classList.toggle("open");
