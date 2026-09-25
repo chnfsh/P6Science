@@ -6,7 +6,7 @@
 <title>数学错题库</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Serif+SC:wght@700;900&family=Noto+Sans+SC:wght@500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --paper:#F6F2E7;
@@ -367,9 +367,80 @@ button.ghost-btn{
   font-family:'IBM Plex Sans',sans-serif;
 }
 .empty-msg{color:var(--ink-soft);font-size:14px;padding:30px 0;text-align:center;}
+
+/* ---- left sidebar: choose Science / Math (matches P6 Science app) ---- */
+:root{ --sidebar-w:220px; }
+#contentWrap{ transition:margin-left .25s ease; margin-left:var(--sidebar-w); }
+body.sidebar-collapsed #contentWrap{ margin-left:0; }
+
+.app-sidebar{
+  position:fixed; top:0; left:0; width:var(--sidebar-w); height:100vh; z-index:120;
+  background:var(--paper-2); border-right:1px solid var(--rule);
+  display:flex; flex-direction:column; padding:22px 16px;
+  transition:transform .25s ease; overflow-y:auto;
+}
+body.sidebar-collapsed .app-sidebar{ transform:translateX(-100%); }
+
+.app-sidebar-brand{ margin-bottom:22px; padding-bottom:16px; border-bottom:1px dashed var(--rule); }
+.app-sidebar-brand-cn{ font-family:"Noto Serif SC",serif; font-weight:900; font-size:16px; color:var(--ink); line-height:1.4; }
+.app-sidebar-brand-en{ font-family:"JetBrains Mono",monospace; font-size:10px; color:var(--ink-soft); margin-top:4px; letter-spacing:.02em; }
+
+.app-sidebar-nav{ display:flex; flex-direction:column; gap:8px; }
+.app-sidebar-item{
+  display:flex; align-items:center; gap:12px; padding:12px 12px; border-radius:6px;
+  text-decoration:none; color:var(--ink); border:1px solid transparent; transition:all .15s;
+}
+.app-sidebar-item:hover{ background:var(--paper); border-color:var(--rule); }
+.app-sidebar-item.active{ background:var(--ink); color:var(--paper); border-color:var(--ink); }
+.app-sidebar-item-icon{ font-size:20px; flex-shrink:0; }
+.app-sidebar-item-label{ font-family:"Noto Sans SC",sans-serif; font-size:13.5px; font-weight:600; line-height:1.6; }
+.app-sidebar-item-en{ font-family:"JetBrains Mono",monospace; font-size:10px; font-weight:500; opacity:.75; }
+
+.app-sidebar-collapse-btn{
+  position:absolute; top:22px; right:-14px; width:28px; height:28px; border-radius:50%;
+  background:var(--paper-2); border:1px solid var(--rule); color:var(--ink-soft);
+  cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center;
+  box-shadow:0 2px 6px rgba(34,49,75,0.15);
+}
+.app-sidebar-collapse-btn:hover{ color:var(--ink); }
+
+.app-sidebar-open-btn{
+  position:fixed; top:20px; left:16px; z-index:110; width:36px; height:36px; border-radius:50%;
+  background:var(--paper-2); border:1px solid var(--rule); color:var(--ink);
+  cursor:pointer; font-size:16px; box-shadow:0 3px 10px rgba(34,49,75,0.18);
+  display:none; align-items:center; justify-content:center;
+}
+body.sidebar-collapsed .app-sidebar-open-btn{ display:flex; }
+
+@media (max-width:760px){
+  :root{ --sidebar-w:78vw; }
+  body:not(.sidebar-collapsed) #contentWrap{ margin-left:0; }
+  body:not(.sidebar-collapsed) .app-sidebar{ box-shadow:0 0 0 2000px rgba(34,49,75,0.35); }
+}
 </style>
 </head>
 <body>
+
+<div class="app-sidebar" id="appSidebar">
+  <div class="app-sidebar-brand">
+    <div class="app-sidebar-brand-cn">数学科学错题专练</div>
+    <div class="app-sidebar-brand-en">Math &amp; Science Wrong-Question Practice</div>
+  </div>
+  <nav class="app-sidebar-nav">
+    <a class="app-sidebar-item" href="https://chnfsh.github.io/P6Science/" id="sciNavItem">
+      <span class="app-sidebar-item-icon">🔬</span>
+      <span class="app-sidebar-item-label">科学错题本<br><span class="app-sidebar-item-en">Science</span></span>
+    </a>
+    <a class="app-sidebar-item active" href="#" id="mathNavItem">
+      <span class="app-sidebar-item-icon">📐</span>
+      <span class="app-sidebar-item-label">数学错题库<br><span class="app-sidebar-item-en">Math</span></span>
+    </a>
+  </nav>
+  <button class="app-sidebar-collapse-btn" id="sidebarCollapseBtn" title="收起侧栏 / Hide sidebar">‹</button>
+</div>
+<button class="app-sidebar-open-btn" id="sidebarOpenBtn" title="展开侧栏 / Show sidebar">≡</button>
+
+<div id="contentWrap">
 <div class="wrap">
 
   <header class="head">
@@ -393,6 +464,7 @@ button.ghost-btn{
 
   <div id="groups"></div>
 
+</div>
 </div>
 
 <script>
@@ -999,6 +1071,31 @@ function mark(q, correct){
 }
 
 render();
+
+// ---- sidebar collapse/expand (shared behaviour with the Science app) ----
+const SIDEBAR_KEY = "p6sc_sidebar_collapsed_v1";
+const collapseBtn = document.getElementById("sidebarCollapseBtn");
+const openBtn = document.getElementById("sidebarOpenBtn");
+function setSidebarCollapsed(collapsed){
+  document.body.classList.toggle("sidebar-collapsed", collapsed);
+  try{ localStorage.setItem(SIDEBAR_KEY, collapsed ? "1" : "0"); }catch(e){}
+}
+let sidebarStored = null;
+try{ sidebarStored = localStorage.getItem(SIDEBAR_KEY); }catch(e){}
+setSidebarCollapsed(sidebarStored === "1" || (sidebarStored === null && window.innerWidth < 760));
+collapseBtn.addEventListener("click", () => setSidebarCollapsed(true));
+openBtn.addEventListener("click", () => setSidebarCollapsed(false));
+// On mobile, the sidebar overlays the page; tapping outside it should close it again.
+document.getElementById("appSidebar").addEventListener("click", (e) => {
+  if(e.target.id === "sidebarCollapseBtn") return;
+});
+document.addEventListener("click", (e) => {
+  const sidebar = document.getElementById("appSidebar");
+  if(window.innerWidth >= 760) return;
+  if(document.body.classList.contains("sidebar-collapsed")) return;
+  if(sidebar.contains(e.target) || e.target.id === "sidebarOpenBtn") return;
+  setSidebarCollapsed(true);
+});
 </script>
 </body>
 </html>
